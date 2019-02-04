@@ -1,0 +1,45 @@
+version: '2.1'
+
+networks:
+  sb:
+    driver: bridge
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    networks:
+     sb:
+        aliases:
+          - zk
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    volumes:
+      - /mnt/ncar_da/zookeeper/data:/var/lib/zookeeper/data
+      - /mnt/ncar_da/zookeeper/logs:/var/lib/zookeeper/log 
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    #container_name: kafka
+    #hostname: ${KAFKA_HOSTNAME:-hostname}
+    command: bash -c "HOSTNAME=hostname && export KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://`hostname -i | awk '{print $NF}'`:9092 && echo 'hello world' && echo $${KAFKA_ADVERTISED_LISTENERS} && echo 'bye world' && /etc/confluent/docker/run"
+    depends_on:
+      - zookeeper
+    networks:
+     sb:
+      aliases:
+        - kafkas
+    ports:
+      - "9092"
+    volumes:
+      - /mnt/ncar_da/kafka:/var/lib/kafka/data
+    environment:
+      #KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      #KAFKA_ADVERTISED_HOST_NAME: localhost
+      #KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://0.0.0.0:9092 #PLAINTEXT://${hostname}:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
