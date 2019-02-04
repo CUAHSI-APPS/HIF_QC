@@ -1,0 +1,26 @@
+<DataStreams>
+  <DataStream>
+    <Stream>63</Stream>
+    <Test>
+      <Type>Bounds</Type>
+      <Max>28.0</Max>
+      <Min>-40.0</Min>
+    </Test>
+    <Test>
+      <Type>Repeat Value</Type>
+      <RepeatThreshold>3</RepeatThreshold>
+    </Test>
+  </DataStream>
+  <DataStream>
+    <Stream>66</Stream>
+    <Test>
+      <Type>Bounds</Type>
+      <Max>28.5</Max>
+      <Min>-19.7</Min>
+    </Test>
+    <Test>
+      <Type>Repeat Value</Type>
+      <RepeatThreshold>3</RepeatThreshold>
+    </Test>
+  </DataStream>
+</DataStreams>

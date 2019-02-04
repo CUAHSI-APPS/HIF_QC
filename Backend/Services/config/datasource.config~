@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+
+<!--Name: datasource.config.xml -->
+<!--Author: Connor Scully-Allison -->
+<!--Date: Nov 20, 2017 -->
+<!--Description: This is a prototype for a configuration file that will be created
+	programmatically via the web based UI. In this configuration file data-
+	sources are defiend generically with some custom defintions-->
+
+
+<DataSource>
+  <Type>Database</Type>
+  <Language>SQL</Language>
+  <Implementation>Microsoft SQL</Implementation>
+  <Connection>mssql+pyodbc://{0}:{1}@asgard-loki.rd.unr.edu/{2}?driver=FreeTDS</Connection>
+  <Username>cilstudent</Username>
+  <Password>cil!234</Password>
+  <InitialCatalog>
+  	<Name>ProtoNRDC</Name>
+    <Tables>
+	    <Context namespace="Infrastructure">
+	    	<Table id="Deployments">
+          <Name>Deployments</Name>
+        </Table>
+        <Table id="Components">
+          <Name>Components</Name>
+        </Table>
+	    </Context>
+	    <Context namespace="Data">
+        <Table id="Data Streams">
+          <Name>Data Streams</Name>
+          <TestedDataStreams>
+            <Stream>63</Stream>
+            <Stream>66</Stream>
+          </TestedDataStreams>
+        </Table>
+		    <Table id="Measurements">
+          <Name>Measurements</Name>
+        </Table>
+      </Context>
+      <Context namespace="Vocabulary">
+		    <Table id="L1 Quality Control">
+          <Name>[L1 Quality Control]</Name>
+        </Table>
+      </Context>
+    </Tables>
+  </InitialCatalog>
+</DataSource>
