@@ -19,8 +19,8 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     volumes:
-      - /mnt/ncar_da/zookeeper/data:/var/lib/zookeeper/data
-      - /mnt/ncar_da/zookeeper/logs:/var/lib/zookeeper/log 
+      - $ZOOKEEPER_DATA:/var/lib/zookeeper/data
+      - $ZOOKEEPER_LOG:/var/lib/zookeeper/log 
   kafka:
     image: confluentinc/cp-kafka:latest
     #container_name: kafka
@@ -35,7 +35,7 @@ services:
     ports:
       - "9092"
     volumes:
-      - /mnt/ncar_da/kafka:/var/lib/kafka/data
+      - $KAFKA_DATA:/var/lib/kafka/data
     environment:
       #KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
