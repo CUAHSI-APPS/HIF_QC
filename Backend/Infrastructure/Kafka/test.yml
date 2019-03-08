@@ -1,6 +1,18 @@
 version: '2.1'
 
 services:
+  consumer-test:
+    build:
+      context: ../../
+      dockerfile: Infrastructure/Dockerfiles/FlaskService
+    container_name: ingestor
+    ports:
+      - "5000:5000"
+  redis:
+    image: redis:latest
+    container_name: session_management
+    ports:
+      - "6397:6397"
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
@@ -9,11 +21,11 @@ services:
       - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000 
+      ZOOKEEPER_TICK_TIME: 2000
       #KAFKA_HEAP_OPTS: -Xmx256M -Xms4M
     #volumes:
     #  - $ZOOKEEPER_DATA:/var/lib/zookeeper/data
-    #  - $ZOOKEEPER_LOG:/var/lib/zookeeper/log 
+    #  - $ZOOKEEPER_LOG:/var/lib/zookeeper/log
   kafka:
     image: confluentinc/cp-kafka:latest
     depends_on:
@@ -32,4 +44,3 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
