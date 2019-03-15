@@ -1,0 +1,51 @@
+version: '2.1'
+
+services:
+  consumer-test:
+    build:
+      context: ../../
+      dockerfile: Infrastructure/Dockerfiles/FlaskService
+    container_name: ingestor
+    depends_on:
+      - kafka
+    ports:
+      - "5000:5000"
+  redis:
+    image: redis:latest
+    container_name: session_management
+    ports:
+      - "6397:6397"
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    hostname: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+      #KAFKA_HEAP_OPTS: -Xmx256M -Xms4M
+    #volumes:
+    #  - $ZOOKEEPER_DATA:/var/lib/zookeeper/data
+    #  - $ZOOKEEPER_LOG:/var/lib/zookeeper/log
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+        - "9092:9092"
+    #volumes:
+    #  - $KAFKA_DATA:/var/lib/kafka/data
+    expose:
+      - 29092
+    environment:
+      #KAFKA_BROKER_ID: 2
+      #KAFKA_HEAP_OPTS: -Xmx256M -Xms4M
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      #KAFKA_LOG4J_LOGGERS: log.cleaner.enable=false,log.cleaner.dedupe.buffer.size=64M
+      #KAFKA_ADVERTISED_HOST_NAME: localhost
+      #KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092 #PLAINTEXT://${hostname}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1

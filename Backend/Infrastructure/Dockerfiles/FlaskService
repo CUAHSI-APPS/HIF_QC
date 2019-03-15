@@ -1,0 +1,6 @@
+FROM python:3.7
+COPY Services/Input_Mgr/ code/
+WORKDIR /code
+ENV FLASK_APP=input_mgr
+RUN pip install -r requirements.txt
+CMD python input_mgr.py
