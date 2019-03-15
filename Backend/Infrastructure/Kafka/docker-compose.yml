@@ -10,6 +10,8 @@ services:
       - kafka
     ports:
       - "5000:5000"
+    volumes:
+      - ../../Services/Input_Mgr:/code
   redis:
     image: redis:latest
     container_name: session_management
