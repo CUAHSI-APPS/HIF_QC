@@ -11,7 +11,9 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ../../Services/Input_Mgr:/code
+      - ../../:/code
+    environment:
+      PYTHONPATH: /code
   redis:
     image: redis:latest
     container_name: session_management

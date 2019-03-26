@@ -1,5 +1,5 @@
 # compose_flask/app.py
-#from TicketCounter import TicketCounter
+from Classes.TicketCounter import SessionTicketCounter as SessionTC 
 from flask import Flask, jsonify, request
 from redis import Redis
 from kafka import KafkaProducer
@@ -7,7 +7,7 @@ import email
 
 app = Flask(__name__)
 redis = Redis(host='redis', port=6379)
-SessionTC = TicketCounter
+#SessionTC = TicketCounter
 
 
 def get_kafka_prod():
