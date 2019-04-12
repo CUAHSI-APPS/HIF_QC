@@ -1,6 +1,6 @@
 import sys
-sys.path.append("..")
-sys.path.append("../../classes")
+#sys.path.append("..")
+#sys.path.append("../../classes")
 from flask import Flask, jsonify, json, request
 from flask_cors import cross_origin
 import pyodbc
