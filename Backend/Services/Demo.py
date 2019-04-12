@@ -1,5 +1,5 @@
 import sys
-sys.path.append("../classes")
+#sys.path.append("../classes")
 from Configuration import SourceConfiguration, TestConfiguration
 from DataSource import DataBaseSource
 from DataContainers import Measurement, DataStream, DataBundle
