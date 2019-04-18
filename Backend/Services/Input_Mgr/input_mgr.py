@@ -1,5 +1,5 @@
 # compose_flask/app.py
-from Classes.TicketCounter import SessionTicketCounter
+from Backend.Classes.TicketCounter import SessionTicketCounter
 from flask import Flask, jsonify, request
 from redis import Redis
 from kafka import KafkaProducer
