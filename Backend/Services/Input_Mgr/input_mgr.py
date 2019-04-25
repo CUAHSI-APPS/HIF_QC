@@ -1,6 +1,6 @@
 # compose_flask/app.py
 from Backend.Classes.TicketCounter import SessionTicketCounter
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, flash
 from redis import Redis
 from kafka import KafkaProducer
 import email
@@ -9,6 +9,8 @@ app = Flask(__name__)
 redis = Redis(host='redis', port=6379)
 SessionTC = SessionTicketCounter()
 
+
+improperFileRequest = "Error no file found."
 
 def get_kafka_prod():
     return KafkaProducer(bootstrap_servers=['kafka:29092'])
@@ -26,17 +28,27 @@ def testkafka(msg):
 
 @app.route('/upload/', methods=['POST'])
 def upload():
+    global improperFileRequest
     Session = SessionTC.TakeTicket()
 
-    if 'multipart/form-data' in request.headers['Content-Type']:
-        input_stream = request.files['file']
-    else:
-        input_stream = request.stream
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        #flash('No file part')
+        return improperFileRequest, 400
+    #http://flask.pocoo.org/docs/1.0/patterns/fileuploads/
+    file = request.files['file']
 
+    # if user does not select file, browser also
+    # submit an empty part without filename
+    #if file.filename == '':
+    #    #flash('No selected file')
+    #    return "Error no file found.", 400 
+    
+    #print (file.read())
+    print (file.filename)
     filename = Session + '.csv'
-
     with open(filename, 'wb') as F:
-        F.write(input_stream.read())
+        F.write(file.read())
 
     return "Success"
 
