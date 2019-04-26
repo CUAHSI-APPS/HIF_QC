@@ -4,6 +4,7 @@ from flask import Flask, jsonify, request, flash
 from redis import Redis
 from kafka import KafkaProducer
 import email
+import json
 
 app = Flask(__name__)
 redis = Redis(host='redis', port=6379)
@@ -29,7 +30,6 @@ def testkafka(msg):
 @app.route('/upload/', methods=['POST'])
 def upload():
     global improperFileRequest
-    Session = SessionTC.TakeTicket()
 
     # check if the post request has the file part
     if 'file' not in request.files:
@@ -46,11 +46,14 @@ def upload():
     
     #print (file.read())
     print (file.filename)
+    Session = SessionTC.TakeTicket(file.filename)
     filename = Session + '.csv'
     with open(filename, 'wb') as F:
         F.write(file.read())
+    
+    outputJson = {"status":"Success","token":Session}
 
-    return "Success"
+    return jsonify(outputJson)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
