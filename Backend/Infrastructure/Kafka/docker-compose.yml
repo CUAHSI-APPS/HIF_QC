@@ -1,7 +1,7 @@
 version: '2.1'
 
 services:
-  consumer-test:
+  input-mgr-svc:
     build:
       context: ../../
       dockerfile: Infrastructure/Dockerfiles/FlaskService

@@ -5,6 +5,8 @@ from redis import Redis
 from kafka import KafkaProducer
 import email
 import json
+import pandas as pd
+import os
 
 app = Flask(__name__)
 redis = Redis(host='redis', port=6379)
@@ -52,8 +54,18 @@ def upload():
         F.write(file.read())
     
     outputJson = {"status":"Success","token":Session}
+    redis.set(Session, os.path.abspath(filename))
 
     return jsonify(outputJson)
+
+@app.route('/data', methods=['GET'])
+def get_columns():
+    print (request.args.get('session_id'))
+    filename = open(redis.get(request.args.get('session_id')), 'r')
+    df1 = pd.read_csv(filename)
+    
+    return jsonify(list(df1.columns))#str(os.path.exists(redis.get(request.args.get('session_id'))))#jsonify(df1.columns())
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
