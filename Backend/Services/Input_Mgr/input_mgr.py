@@ -39,7 +39,7 @@ def upload():
         return improperFileRequest, 400
     #http://flask.pocoo.org/docs/1.0/patterns/fileuploads/
     file = request.files['file']
-
+    #print (request)
     # if user does not select file, browser also
     # submit an empty part without filename
     #if file.filename == '':
@@ -47,7 +47,7 @@ def upload():
     #    return "Error no file found.", 400 
     
     #print (file.read())
-    print (file.filename)
+    #print (file.filename)
     Session = SessionTC.TakeTicket(file.filename)
     filename = Session + '.csv'
     with open(filename, 'wb') as F:
@@ -55,8 +55,9 @@ def upload():
     
     outputJson = {"status":"Success","token":Session}
     redis.set(Session, os.path.abspath(filename))
-
-    return jsonify(outputJson)
+    #jsonify(list(request.form.getlist('test')))
+    #jsonify(request.form.get('csvdate') + request.form.get('csvdata'))
+    return  jsonify(outputJson)
 
 @app.route('/data', methods=['GET'])
 def get_columns():
