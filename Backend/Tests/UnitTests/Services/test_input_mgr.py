@@ -36,7 +36,7 @@ def test_UploadingFileSuccessfully(client):
 
 def test_UploadingNoFile(client):
     data = dict(
-        file=(io.BytesIO(b'my file contents'), ""),
+        #file=(io.BytesIO(b'my file contents'), ""),
     )
     response = client.post('/upload/', data=data, content_type='multipart/form-data')
-    assert response.data == improperFileRequest 
+    assert response.data.decode("utf-8") == improperFileRequest
