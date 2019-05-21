@@ -1,0 +1,7 @@
+flask
+redis
+kafka-python
+# bug in docker https://stackoverflow.com/questions/55320496/oserror-errno-8-exec-format-error-python
+werkzeug==0.14.1
+pandas
+flask-cors

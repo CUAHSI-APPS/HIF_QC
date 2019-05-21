@@ -1,0 +1,6 @@
+FROM python:3.7
+COPY Services/DataManager/ code/
+WORKDIR /code
+ENV FLASK_APP=DataManager
+RUN pip3 install -r requirements.txt
+CMD python /code/Backend/Services/DataManager/DataManager.py
