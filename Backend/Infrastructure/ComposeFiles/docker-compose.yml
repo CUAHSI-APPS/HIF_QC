@@ -1,11 +1,25 @@
 version: '2.1'
 
 services:
+  data-mgr-svc:
+    build:
+      context: ../../
+      dockerfile: Infrastructure/Dockerfiles/DataService
+    container_name: data_mgr
+    depends_on:
+      - kafka
+    ports:
+      - "8082:8082"
+    volumes:
+      - ../../:/code/Backend
+      - ../../SessionFiles/:/SessionFiles
+    environment:
+      PYTHONPATH: /code
   input-mgr-svc:
     build:
       context: ../../
       dockerfile: Infrastructure/Dockerfiles/FlaskService
-    container_name: ingestor
+    container_name: input_mgr
     depends_on:
       - kafka
     ports:

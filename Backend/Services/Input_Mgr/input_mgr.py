@@ -49,8 +49,6 @@ def upload():
     #    #flash('No selected file')
     #    return "Error no file found.", 400
 
-    #print (file.read())
-    #print (file.filename)
     #Change permissions for writing out as sudo or not
     Session = SessionTC.TakeTicket(file.filename)
     filename = '/SessionFiles/' + Session + '.csv'
@@ -59,20 +57,21 @@ def upload():
 
     outputJson = {"status":"Success","token":Session, "filename": filename}
     redis.set(Session, os.path.abspath(filename))
-    #jsonify(list(request.form.getlist('test')))
-    #jsonify(request.form.get('csvdate') + request.form.get('csvdata'))
     return  jsonify(outputJson)
 
+
+# Delete upon verification of other service working
 @app.route('/data/<sessionId>', methods=['GET'])
 def get_columns(sessionId):
-    print(sessionId)
+    cols = []
+
     fileName = dataManager.retrieveFileLoc(sessionId)
+    data = dataManager.readAndLoadData(fileName, 20)
 
-    return dataManager.readAndLoadData(fileName)
-    # json = pd.read_csv(filename)
+    for col in data:
+        cols.append(col)
 
-    # return jsonify(list(df1.columns))#str(os.path.exists(redis.get(request.args.get('session_id'))))#jsonify(df1.columns())
-
+    return jsonify(cols)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
