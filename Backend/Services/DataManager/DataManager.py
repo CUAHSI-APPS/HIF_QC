@@ -5,12 +5,13 @@ from flask_cors import cross_origin
 import pyodbc
 
 app = Flask(__name__)
+redis = Redis(host='redis', port=6379)
 
 # Service Functionality
 @app.route('/Data/')
 @cross_origin()
 def index():
-	
+
 	# Try
 	try:
 		print("Working")
