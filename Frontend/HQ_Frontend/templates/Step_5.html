@@ -1,0 +1,73 @@
+﻿<div class="card-body">
+    <div class="row">
+        <div class="col-sm-8">
+            <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+                <ol class="carousel-indicators">
+                    <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+                </ol>
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <canvas id="testGraph"></canvas>
+                        <script>
+                            SetGraph();
+                        </script>
+                    </div>
+                </div>
+                <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="card bg-light">
+                <div class="card-body">
+                    <h6>Graph Metadata</h6>
+                    <textarea id="taMetaReview" class="form-control" rows="5"></textarea>
+                    <script>
+                        SetReviewMeta();
+                    </script>
+                </div>
+            </div>
+            <div class="p-3">
+                <div class="card bg-light">
+                    <div class="card-body">
+                        <h6>Flagged Data</h6>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <td>DateTime</td>
+                                        <td>Value</td>
+                                        <td>QC Flag</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm d-flex justify-content-sm-center">
+        <div class="button-group">
+            <button class="btn btn-secondary" id="previousTask" onclick="PreviousProgressBar(4);">Previous</button>
+            <button class="btn btn-success" onclick="NextProgressBar(6);">Continue ></button>
+        </div>
+    </div>
+</div>
+

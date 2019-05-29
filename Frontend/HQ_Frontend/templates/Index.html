@@ -1,0 +1,77 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <meta charset="utf-8" />
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.bundle.min.js" integrity="sha384-zDnhMsjVZfS3hiP7oCBRmfjkQC4fzxVxFhBx8Hkz2aZX8gEvA/jsP3eXRCvzTofP" crossorigin="anonymous"></script>
+    <title>HomeWork5</title>
+    <script src="../static/js/Chart.min.js"></script>
+    <script src="../static/js/MultiStepController.js"></script>
+    <script src="../static/js/Script.js"></script>
+    <link rel="stylesheet" type="text/css" href="../static/css/Custom.css" />
+    <link rel="stylesheet" type="text/css" href="../static/css/MultiStepForm.css" />
+    <script src="../static/js/dropzone.js"></script>
+    <script src="../static/js/index.js"></script>
+</head>
+<body>
+    <div id="page">
+        <div id="MainContent" class="main-content row">
+
+            <div class="card-body">
+                <nav id="navbarMain" class="navbar navbar-expand-sm border-bottom border-top rounded">
+                    <div class="navbar-brand">
+                        <h3><span class="text-primary">HYDRO</span><span class="text-success">QUALITY</span></h3>
+                    </div>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContentCS" aria-controls="navbarSupportedContentCS" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse w-100" id="navbarSupportedContentCS">
+                        <ul class="navbar-nav"></ul>
+                    </div>
+                </nav>
+
+                <div class="pt-3 p-1">
+                    <div class="card-body">
+                        <div class="row">
+                            <ul id="Progress-Bar" class="progressbar pt-2 w-100 noPadding">
+                                <li class="active" style="width:16.66%">Upload</li>
+                                <li style="width:16.66%">Verify</li>
+                                <li style="width:16.66%">Configure</li>
+                                <li style="width:16.66%">Run Test</li>
+                                <li style="width:16.66%">Review</li>
+                                <li style="width:16.66%">Finish</li>
+                            </ul>
+                        </div>
+                        <div class="p-2 row" id="Task-Content">
+                            <div id="StepPlaceholder" class="w-100">{% block content %}{% endblock %}</div>
+                        </div>
+                    </div>
+
+                    <div class="modal" tabindex="-1" role="dialog" id="myModal">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title">Cancel?</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>Are you sure you wish to cancel? All work will be lost.</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <a class="btn btn-danger" href="/">Cancel</a>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">Stay</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -27,6 +27,8 @@ class DataManager():
 
         with open(filePath, 'r') as file:
             df = pd.read_csv(file)
+            df = df.where((pd.notnull(df)), None)
+
             for col in list(df.columns):
                 if numRows is not None:
                     dataDict[col] = list(df[col][:numRows])
@@ -35,12 +37,14 @@ class DataManager():
 
         return dataDict
 
+    #After people idntify
     def retrieveOnlyDataCols(self, filePath, dataColList):
         # variables
         dataDict = {}
 
         with open(filePath, 'r') as file:
             df = pd.read_csv(file)
+            df = df.where((pd.notnull(df)), None)
             for col in list(df.columns):
                 if col in dataColList:
                     dataDict[col] = list(df[col])

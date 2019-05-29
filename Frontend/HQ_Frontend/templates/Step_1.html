@@ -1,0 +1,47 @@
+﻿{% extends "Index.html" %}
+
+{% block content %}
+<div class="card-body">
+    <div class="text-center"><h4>Welcome to the CUAHSI HYDROQUALITY client</h4></div>
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris arcu arcu, tincidunt sed dignissim eget, interdum eget sem. Sed ut est ut dui tempus semper eget sit amet libero. Cras id erat in risus commodo dapibus. Vestibulum pulvinar tortor ut commodo mollis. Proin ut leo placerat, facilisis sapien quis, tristique velit. Aliquam lacinia pulvinar ligula quis pulvinar. Etiam efficitur neque sed nisi faucibus vestibulum. Fusce lacinia vitae purus at congue. Nullam suscipit viverra nibh, ac malesuada ex accumsan vel. Integer faucibus leo a diam hendrerit tincidunt. Fusce accumsan a metus ut hendrerit. Etiam lectus nulla, tempus eu sollicitudin eu, sodales in dolor. Fusce ullamcorper quam tellus.</p>
+
+    <form id="my_dropzone" action="/api/post_csv" method='post' class="dropzone">
+        <div class="dz-default dz-message">
+            <span>Drop a csv file here to upload</span>
+        </div>
+    </form>
+
+    <!-- The upload table -->
+    <div class="card-body" hidden id="UploadFileTable">
+
+    </div>
+
+    <div class="row p-3">
+        <div class="col-sm text-center">
+            <button class="btn btn-secondary">Select a CSV</button>
+        </div>
+        <div class="col-sm text-center">
+            <button class="btn btn-success" disabled id="nextTaskStep1" onclick="NextProgressBar(2);">Continue ></button>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="loadingModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Loading</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Loading Please Wait...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+
