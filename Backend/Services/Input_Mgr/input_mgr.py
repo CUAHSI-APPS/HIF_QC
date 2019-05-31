@@ -1,5 +1,6 @@
 # compose_flask/app.py
 from Backend.Classes.TicketCounter import SessionTicketCounter
+from Backend.Classes.Data import DataManager
 from flask import Flask, jsonify, request, flash
 from redis import Redis
 from kafka import KafkaProducer
@@ -11,6 +12,7 @@ import os
 app = Flask(__name__)
 redis = Redis(host='redis', port=6379)
 SessionTC = SessionTicketCounter()
+dataManager = DataManager(redis)
 
 
 improperFileRequest = "Error no file found."
@@ -37,6 +39,7 @@ def upload():
     if 'file' not in request.files:
         #flash('No file part')
         return improperFileRequest, 400
+
     #http://flask.pocoo.org/docs/1.0/patterns/fileuploads/
     file = request.files['file']
     #print (request)
@@ -44,29 +47,31 @@ def upload():
     # submit an empty part without filename
     #if file.filename == '':
     #    #flash('No selected file')
-    #    return "Error no file found.", 400 
-    
-    #print (file.read())
-    #print (file.filename)
+    #    return "Error no file found.", 400
+
+    #Change permissions for writing out as sudo or not
     Session = SessionTC.TakeTicket(file.filename)
-    filename = Session + '.csv'
+    filename = '/SessionFiles/' + Session + '.csv'
     with open(filename, 'wb') as F:
         F.write(file.read())
-    
-    outputJson = {"status":"Success","token":Session}
+
+    outputJson = {"status":"Success","token":Session, "filename": filename}
     redis.set(Session, os.path.abspath(filename))
-    #jsonify(list(request.form.getlist('test')))
-    #jsonify(request.form.get('csvdate') + request.form.get('csvdata'))
     return  jsonify(outputJson)
 
-@app.route('/data', methods=['GET'])
-def get_columns():
-    print (request.args.get('session_id'))
-    filename = open(redis.get(request.args.get('session_id')), 'r')
-    df1 = pd.read_csv(filename)
-    
-    return jsonify(list(df1.columns))#str(os.path.exists(redis.get(request.args.get('session_id'))))#jsonify(df1.columns())
 
+# Delete upon verification of other service working
+@app.route('/data/<sessionId>', methods=['GET'])
+def get_columns(sessionId):
+    cols = []
+
+    fileName = dataManager.retrieveFileLoc(sessionId)
+    data = dataManager.readAndLoadData(fileName, 20)
+
+    for col in data:
+        cols.append(col)
+
+    return jsonify(cols)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

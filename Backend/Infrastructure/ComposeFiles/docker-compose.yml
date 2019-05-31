@@ -1,17 +1,47 @@
 version: '2.1'
 
 services:
+  hq-frontend:
+    build:
+      context: ../../../
+      dockerfile: Backend/Infrastructure/Dockerfiles/Site
+    container_name: hq-frontend
+    depends_on:
+      - kafka
+    ports:
+      - "7999:7999"
+    volumes:
+      - ../../../Frontend/HQ_Frontend:/code/HQ_Frontend
+      - ../../:/code/Backend
+      - ../../SessionFiles/:/SessionFiles
+    environment:
+      PYTHONPATH: /code
+  data-mgr-svc:
+    build:
+      context: ../../
+      dockerfile: Infrastructure/Dockerfiles/DataService
+    container_name: data_mgr
+    depends_on:
+      - kafka
+    ports:
+      - "8082:8082"
+    volumes:
+      - ../../:/code/Backend
+      - ../../SessionFiles/:/SessionFiles
+    environment:
+      PYTHONPATH: /code
   input-mgr-svc:
     build:
       context: ../../
       dockerfile: Infrastructure/Dockerfiles/FlaskService
-    container_name: ingestor
+    container_name: input_mgr
     depends_on:
       - kafka
     ports:
       - "5000:5000"
     volumes:
       - ../../:/code/Backend
+      - ../../SessionFiles/:/SessionFiles
     environment:
       PYTHONPATH: /code
   redis:

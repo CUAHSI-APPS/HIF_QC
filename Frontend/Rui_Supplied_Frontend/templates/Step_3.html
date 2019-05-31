@@ -1,0 +1,115 @@
+﻿
+<div class="card">
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="card-body">
+                <h6>Data Fields</h6>
+                <select multiple class="form-control selectBox" onchange="SetMeta($(this).val(), '0', '0');">
+                    <option>TempValue</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="card-body">
+                <h6>Data Field Metadata</h6>
+                <textarea type="text" rows="6" id="tbMeta" class="form-control selectBox" />
+                <div class="text-center pt-3">
+                    <button disabled id="btnMeta" onclick="$('#modalMeta').modal('show');" class="btn btn-secondary">Modify Metadata</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="card-body">
+                <h6>QC Test</h6>
+                <select id="selectTest" multiple class="form-control selectBox">
+                </select>
+                <div class="button-group text-center pt-3">
+                    <button disabled id="btnAddTest" class="btn btn-secondary" onclick="$('#modalTest').modal('show');">Add Test</button>
+                    <button disabled id="btnModTest" class="btn btn-secondary" onclick="$('#modalTest').modal('show');">Modify Test</button>
+                    <button disabled id="btnRmvTest" class="btn btn-secondary" onclick="RemoveTest();">Remove Test</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row p-3 text-center">
+    <div class="col-sm">
+        <button class="btn btn-secondary" onclick="PreviousProgressBar(2);">Previous</button>
+    </div>
+    <div class="col-sm">
+        <button class="btn btn-success" disabled id="nextTaskStep3" onclick="NextProgressBar(4);">Continue ></button>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="modalMeta">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="metaTitle"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Temp Lower</label>
+                    <input class="form-control" type="text" id="tbMeta1" />
+                </div>
+                <div class="form-group">
+                    <label>Temp Upper</label>
+                    <input class="form-control" type="text" id="tbMeta2" />
+                </div>
+            </div>
+            <div class="modal-footer text-center">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" onclick="SetMeta($(metaTitle).val(),$(tbMeta1).val(),$(tbMeta2).val())" class="btn btn-success">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="modalTest">
+    <div class="modal-dialog" style="max-width:75%" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Test</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <canvas id="testGraph"></canvas>
+                        <script>
+                            SetTestGraph();
+                        </script>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label>Test Type</label>
+                            <select class="form-control">
+                                <option selected>Test 1</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Lower Temp</label>
+                            <input class="form-control" id="lowerTB" placeholder="Data" />
+                        </div>
+                        <div class="form-group">
+                            <label>Upper Temp</label>
+                            <input class="form-control" id="upperTB" placeholder="Data" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer text-center">
+                <button type="button" class="btn btn-success">Add Additional Data</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" onclick="AddTest();" class="btn btn-success">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,6 @@
+FROM python:3.7
+COPY Frontend/HQ_Frontend code/HQ_Frontend
+WORKDIR /code/HQ_Frontend
+ENV FLASK_APP=main
+RUN pip3 install -r requirements.txt
+CMD python /code/HQ_Frontend/main.py
