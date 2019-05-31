@@ -1,5 +1,5 @@
 import sys
-sys.path.append("..")
+#sys.path.append("..")
 from flask import Flask, jsonify, json, request
 from flask_cors import cross_origin
 import pyodbc
