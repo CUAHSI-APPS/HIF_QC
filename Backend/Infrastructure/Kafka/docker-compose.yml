@@ -1,7 +1,7 @@
 version: '2.1'
 
 services:
-  consumer-test:
+  input-mgr-svc:
     build:
       context: ../../
       dockerfile: Infrastructure/Dockerfiles/FlaskService
@@ -11,7 +11,9 @@ services:
     ports:
       - "5000:5000"
     volumes:
-      - ../../Services/Input_Mgr:/code
+      - ../../:/code/Backend
+    environment:
+      PYTHONPATH: /code
   redis:
     image: redis:latest
     container_name: session_management
