@@ -1,0 +1,59 @@
+﻿    <!-- The upload table -->
+<div class="card-body" >
+    <h4>Uploaded Data File (<span id="rowCount">100</span> rows)</h4>
+    <div id="tablePlaceholder" style="max-height:325px; overflow-y:scroll"></div>
+</div>
+
+<div class="row">
+    <div class="col-sm-9">
+        <div class="card">
+            <div class="row p-3">
+                <div class="col-sm-5">
+                    <div class="card bg-light" id="SelectPlaceholder">
+                    </div>
+                </div>
+                <div class="col-sm-2">
+                    <div class="card-body">
+                        <div class="text-center p-3">
+                            <button class="btn btn-secondary" id="moveData2" onclick="setDataBox2();">>></button>
+                        </div>
+                        <div class="text-center p-3">
+                            <button class="btn btn-secondary" id="moveData1" onclick="setDataBox1();"><<</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-5">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6>Data Columns</h6>
+                            <select id="dataBox2" class="form-control selectBox" multiple></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="card bg-light">
+            <div class="card-body">
+                <h6>Select Date Time Column</h6>
+                <select id="dateTimeBox1" class="form-control selectBox" multiple onchange="Step3();">
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    setStep2();
+    setDateTimeBox();
+</script>
+
+<div class="row p-3 text-center">
+    <div class="col-sm">
+        <button class="btn btn-secondary" onclick="PreviousProgressBar(1);">Previous</button>
+    </div>
+    <div class="col-sm">
+        <button class="btn btn-success" disabled id="nextTaskStep2" onclick="NextProgressBar(3);">Continue ></button>
+    </div>
+</div>

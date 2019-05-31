@@ -1,0 +1,91 @@
+﻿.main-content {
+    max-width: 90%;
+    margin: auto;
+}
+
+.progressbar {
+counter-reset: step;
+z-index: 1;
+}
+
+.noPadding {
+padding-left: 0px;
+}
+
+.progressbar li {
+list-style-type: none;
+float: left;
+font-size: 12px;
+position: relative;
+text-align: center;
+text-transform: uppercase;
+}
+
+.progressbar li:before {
+width: 30px;
+height: 30px;
+content: counter(step);
+counter-increment: step;
+line-height: 30px;
+border: 2px solid #7d7d7d;
+display: block;
+text-align: center;
+margin: 0 auto 10px auto;
+border-radius: 50%;
+background-color: white;
+}
+
+.progressbar li:after {
+width: 100%;
+height: 2px;
+content: '';
+position: absolute;
+background-color: #7d7d7d;
+top: 15px;
+left: -50%;
+z-index: -1;
+}
+
+.progressbar li:first-child:after {
+content: none;
+}
+
+.progressbar li.active {
+color: green;
+}
+
+.progressbar li.active:before {
+border-color: #55b776;
+}
+
+.progressbar li.active + li.active:after {
+background-color: #55b776;
+}
+
+.progressbar li.complete {
+color: #007bff;
+}
+
+.progressbar li.complete:before {
+border-color: #007bff;
+}
+
+.progressbar li.complete + li.complete:after {
+background-color: #007bff;
+}
+
+.progressbar li.error {
+color: red;
+}
+
+.progressbar li.error:before {
+border-color: red;
+}
+
+.progressbar li.error + li.error:after {
+background-color: red;
+}
+
+.form-control.showError {
+border: 1px solid red
+}
