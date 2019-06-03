@@ -942,7 +942,10 @@ var Dropzone = function (_Emitter) {
 
                 // When the complete upload is finished and successful
                 // Receives `file`
-                success: function success(file) {
+                /* Modified for Hydroquality Applications */
+                success: function success(file, response) {
+                    manageSuccessfulUpload(file, response);
+
                     if (file.previewElement) {
                         return file.previewElement.classList.add("dz-success");
                     }
@@ -2804,7 +2807,6 @@ var Dropzone = function (_Emitter) {
                 var file = _ref30;
 
                 file.status = Dropzone.SUCCESS;
-                dropPreview();
                 this.emit("success", file, responseText, e);
                 this.emit("complete", file);
             }

@@ -4,6 +4,7 @@ from Backend.Classes.Data import DataManager
 from flask import Flask, jsonify, request, flash
 from redis import Redis
 from kafka import KafkaProducer
+from flask_cors import cross_origin
 import email
 import json
 import pandas as pd
@@ -21,10 +22,12 @@ def get_kafka_prod():
     return KafkaProducer(bootstrap_servers=['kafka:29092'])
 
 @app.route('/')
+@cross_origin()
 def hello():
     return "Hello world"
 
 @app.route('/testkafka/<msg>')
+@cross_origin()
 def testkafka(msg):
     prod = get_kafka_prod()
     prod.send('SessionData', value=bytes(msg,encoding="ascii"))
@@ -32,6 +35,7 @@ def testkafka(msg):
     return msg
 
 @app.route('/upload/', methods=['POST'])
+@cross_origin()
 def upload():
     global improperFileRequest
 
@@ -55,13 +59,14 @@ def upload():
     with open(filename, 'wb') as F:
         F.write(file.read())
 
-    outputJson = {"status":"Success","token":Session, "filename": filename}
+    outputJson = {"status":"Success", "token":Session, "filename": filename}
     redis.set(Session, os.path.abspath(filename))
     return  jsonify(outputJson)
 
 
 # Delete upon verification of other service working
 @app.route('/data/<sessionId>', methods=['GET'])
+@cross_origin()
 def get_columns(sessionId):
     cols = []
 
