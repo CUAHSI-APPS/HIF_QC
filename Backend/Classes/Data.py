@@ -20,6 +20,27 @@ class DataManager():
     def retrieveFileLoc(self, sessionId):
         return self.redis.get(sessionId)
 
+    def getCols(self, filePath):
+        col = []
+        df = None
+
+        with open(filePath, 'r') as file:
+            df = pd.read_csv(file)
+            df = df.where((pd.notnull(df)), None)
+
+        return list(df.columns)
+
+    # configuration to work with frontend code
+    def getData(self, filePath, numRows=None):
+        with open(filePath, 'r') as file:
+            df = pd.read_csv(file)
+            df = df.where((pd.notnull(df)), None)
+
+            if numRows is not None:
+                return df.head(n=numRows).values.tolist()
+            else:
+                return df.values.tolist()
+
 
     def readAndLoadData(self, filePath, numRows=None):
         #variables

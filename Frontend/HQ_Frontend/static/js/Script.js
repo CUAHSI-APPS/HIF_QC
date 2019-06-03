@@ -1,15 +1,43 @@
 ﻿var lower = 0;
 var upper = 0;
 
+
+
+
+function manageSuccessfulUpload(file, response){
+  sessionStorage.setItem('sessionId', response['token']);
+  dropPreview();
+}
+
+function getPreviewDataUrl(numRows){
+    var dropPreviewBaseUrl = '/api/dropPreview/'
+    // Format url for retrieval of information
+    var rows = numRows.toString();
+
+    var url = dropPreviewBaseUrl+rows+'?';
+    url += 'sessionId=' + sessionStorage.getItem('sessionId');
+
+    return url
+}
+
 function dropPreview() {
+    var url = ''
+  // Unhide table
     $("#UploadFileTable").removeAttr("hidden");
     $("#nextTaskStep1").prop("disabled", false);
-    $("#UploadFileTable").load('/api/dropPreview/2');
+
+    // Format url for retrieval of information
+    url = getPreviewDataUrl(2);
+
+    $("#UploadFileTable").load(url);
     $("#loadingModal").modal("hide");
 }
 
 function setStep2() {
-    $("#tablePlaceholder").load('/api/dropPreview/100');
+    console.log("Check for proper persistence:", sessionStorage.getItem('sessionId'))
+    url = getPreviewDataUrl(100);
+
+    $("#tablePlaceholder").load(url);
     $("#SelectPlaceholder").load('/api/dropPreviewColumnNames');
 }
 
