@@ -38,7 +38,7 @@ function setStep2() {
     url = getPreviewDataUrl(100);
 
     $("#tablePlaceholder").load(url);
-    $("#SelectPlaceholder").load('/api/dropPreviewColumnNames');
+    $("#SelectPlaceholder").load('/api/dropPreviewColumnNames?sessionId='+sessionStorage.getItem('sessionId'));
 }
 
 function setDateTimeBox() {
@@ -76,8 +76,30 @@ function setDataBox1() {
     setDateTimeBox();
 }
 
+// enables us to go on to step 3
 function Step3() {
     $('#nextTaskStep2').prop('disabled', false);
+}
+
+function manageDataForStep(step){
+  switch(step){
+    case 3:
+      stepThreeCleanup();
+      break;
+  }
+}
+
+function stepThreeCleanup(){
+    var dataColumns = [];
+
+    $('#dataBox2').find('option').each(function(i){
+      dataColumns.push($(this).attr('value'));
+    })
+
+
+    console.log(dataColumns);
+    sessionStorage.setItem('dataCols', dataColumns);
+    //upload selected data cols for stats analysis
 }
 
 function SetMeta(name, item1, item2) {

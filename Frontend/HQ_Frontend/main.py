@@ -59,8 +59,10 @@ def drop_Preview(rows):
 
 @app.route('/api/dropPreviewColumnNames')
 def dropPreviewColumnNames():
+    #get column names
+    filePath = dataManager.retrieveFileLoc(request.args.get('sessionId'))
+    column_names = dataManager.getCols(filePath)
 
-    column_names, data_part = util.preview_csv(app.config['UPLOAD_FOLDER']+'NRDC_data.csv', 2)
     return render_template('UploadColumns.html',column_names=column_names)
 
 @app.route('/api/process_csv/<lower_threshold>/<upper_threshold>')
