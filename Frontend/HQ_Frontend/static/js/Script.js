@@ -98,7 +98,7 @@ function stepThreeCleanup(){
 
 
     console.log(dataColumns);
-    sessionStorage.setItem('dataCols', dataColumns);
+    sessionStorage.setItem('dataCols', JSON.stringify(dataColumns));
     //upload selected data cols for stats analysis
 }
 
