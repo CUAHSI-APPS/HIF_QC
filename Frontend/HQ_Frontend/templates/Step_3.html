@@ -1,37 +1,7 @@
-﻿
-<div class="card">
-    <div class="row">
-        <div class="col-sm-3">
-            <div class="card-body">
-                <h6>Data Fields</h6>
-                <select multiple class="form-control selectBox" onchange="SetMeta($(this).val(), '0', '0');">
-                    <option>TempValue</option>
-                </select>
-            </div>
-        </div>
-        <div class="col-sm-3">
-            <div class="card-body">
-                <h6>Data Field Metadata</h6>
-                <textarea type="text" rows="6" id="tbMeta" class="form-control selectBox" />
-                <div class="text-center pt-3">
-                    <button disabled id="btnMeta" onclick="$('#modalMeta').modal('show');" class="btn btn-secondary">Modify Metadata</button>
-                </div>
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="card-body">
-                <h6>QC Test</h6>
-                <select id="selectTest" multiple class="form-control selectBox">
-                </select>
-                <div class="button-group text-center pt-3">
-                    <button disabled id="btnAddTest" class="btn btn-secondary" onclick="$('#modalTest').modal('show');">Add Test</button>
-                    <button disabled id="btnModTest" class="btn btn-secondary" onclick="$('#modalTest').modal('show');">Modify Test</button>
-                    <button disabled id="btnRmvTest" class="btn btn-secondary" onclick="RemoveTest();">Remove Test</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+
+<!-- React Parent Class -->
+<div id="config-parent-view"></div>
+
 
 
 <div class="row p-3 text-center">
@@ -113,3 +83,5 @@
         </div>
     </div>
 </div>
+
+<script type="module" src="../static/js/ConfigParentView.react.js"></script>

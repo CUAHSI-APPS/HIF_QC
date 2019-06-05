@@ -1,0 +1,11 @@
+#tablePlaceholder{
+  max-width: 90vw;
+  overflow-x:scroll;
+  max-height:325px;
+  overflow-y:scroll;
+}
+
+.table-responsive{
+  max-width: 82vw;
+  overflow-x: scroll;
+}
