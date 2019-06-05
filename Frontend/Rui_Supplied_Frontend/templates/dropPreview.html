@@ -1,0 +1,20 @@
+﻿<div class="table-responsive">
+    <table class="table">
+        <thead>
+            <tr>
+                {% for item in column_names %}
+                <th>{{item}}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in data_part %}
+            <tr>
+                {% for data in row %}
+                <td>{{ data }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

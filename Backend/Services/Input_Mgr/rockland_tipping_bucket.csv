@@ -1,12 +1,4 @@
-Site Name:,Rockland Summit,Rockland Summit
-Deployment:,Tipping bucket,Tipping bucket
-Monitored System:,Climate,Climate
-Measured Property:,Precipitation - Liquid,Precipitation - Liquid
-Vertical Offset from Surface:,,
-Units:,in,in
-Measurement Type:,Cumulative,Cumulative
-Measurement Interval:,00:01:00,00:10:00
-Time Stamp ((UTC-08:00) Pacific Time (US & Canada))
+Time Stamp ((UTC-08:00) Pacific Time (US & Canada)),Precipitation - Liquid,Precipitation - Liquid
 2019-02-01T17:17:00.0000000-08:00,0.000000000
 2019-02-01T17:18:00.0000000-08:00,0.000000000
 2019-02-01T17:19:00.0000000-08:00,0.000000000

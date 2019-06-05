@@ -1,0 +1,3 @@
+Name : TempValue 
+TempLower : 0 
+TempUpper : 0
