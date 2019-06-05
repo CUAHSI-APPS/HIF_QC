@@ -1,0 +1,8 @@
+﻿<div class="card-body">
+    <h6>Detected Column Names</h6>
+    <select id="dataBox1" class="form-control selectBox" multiple>
+        {% for item in column_names %}
+        <option value="{{item}}">{{item}}</option>
+        {% endfor %}
+    </select>
+</div>
