@@ -1,0 +1,5 @@
+.md-display{
+  border: 1px grey solid;
+  min-height: 150px;
+  overflow-y: scroll;
+}
