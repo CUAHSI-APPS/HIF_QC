@@ -5,23 +5,27 @@ class ConfigColumnList extends React.Component {
     super(props);
     this.state = {};
     this.colNames = props.dataColumns;
-    console.log(props.dataColumns);
 
     this.handleSelection = this.handleSelection.bind(this);
   }
 
+  //propogates selection back to parent scope
   handleSelection(event){
-      console.log(event);
-      SetMeta("this", '0', '0');
+      this.props.updateSelCol(event.target.value);
   }
 
   render() {
+
+    var dataColsList = this.colNames.map(
+      function(col, i){
+        return <option key={i}>{col}</option>
+    })
 
     return (
       <div className="card-body">
           <h6>Data Fields</h6>
           <select multiple className="form-control selectBox" onChange={this.handleSelection}>
-              <option>TempValue</option>
+            {dataColsList}
           </select>
       </div>
     );
