@@ -24,8 +24,11 @@ var ConfigParentView = function (_React$Component) {
       _this.fetchMetadata(selected);
     };
 
+    _this.clicks = 0;
+
     _this.state = { selectedColumn: '' };
     _this.colNames = JSON.parse(sessionStorage.getItem('dataCols'));
+    _this.metaData = {};
 
     _this.fetchMetadata = _this.fetchMetadata.bind(_this);
     return _this;
@@ -37,17 +40,28 @@ var ConfigParentView = function (_React$Component) {
   }, {
     key: 'fetchMetadata',
     value: function fetchMetadata(colName) {
-      var sampleMetadata = {
-        'Mean': 25,
-        'Standard Deviation': 9.3,
-        'Greatest Value': 112,
-        'Lowest Value': -83,
-        'Units': '',
-        'Data Type': '',
-        'General Category': '',
-        'Time Interval': ''
-      };
-      this.setState({ metaData: sampleMetadata });
+
+      if (typeof this.metaData[colName] === 'undefined') {
+        var sampleMetadata = {
+          'Mean': 25,
+          'Standard Deviation': 9.3,
+          'Greatest Value': 112,
+          'Lowest Value': -83,
+          'Units': '',
+          'Data Type': '',
+          'General Category': '',
+          'Time Interval': ''
+        };
+
+        this.clicks += 1;
+        sampleMetadata['Mean'] += this.clicks;
+        this.setState({ metaData: sampleMetadata });
+        this.metaData[colName] = sampleMetadata;
+      } else {
+        this.setState({ metaData: this.metaData[colName] });
+      }
+
+      console.log(this.metaData);
     }
 
     //enables propogation of selection back to this scope from
@@ -78,7 +92,10 @@ var ConfigParentView = function (_React$Component) {
           React.createElement(
             'div',
             { className: 'col-sm-3' },
-            React.createElement(ConfigMetadataView, { selectedCol: this.state['selectedColumn'], metaData: this.state['Metadata'] })
+            React.createElement(ConfigMetadataView, {
+              selectedCol: this.state['selectedColumn'],
+              metaData: this.state.metaData,
+              updateDownloadedMetadata: this.updateDownloadedMetadata })
           ),
           React.createElement(
             'div',
