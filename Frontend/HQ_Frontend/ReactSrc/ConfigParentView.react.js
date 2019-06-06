@@ -7,8 +7,11 @@ class ConfigParentView extends React.Component {
   constructor(props) {
     super(props);
 
+    this.clicks = 0;
+
     this.state = {selectedColumn: ''};
     this.colNames = JSON.parse(sessionStorage.getItem('dataCols'));
+    this.metaData = {}
 
     this.fetchMetadata = this.fetchMetadata.bind(this);
   }
@@ -17,17 +20,28 @@ class ConfigParentView extends React.Component {
 
 
   fetchMetadata(colName){
-    var sampleMetadata = {
-      'Mean': 25,
-      'Standard Deviation': 9.3,
-      'Greatest Value': 112,
-      'Lowest Value': -83,
-      'Units': '',
-      'Data Type': '',
-      'General Category': '',
-      'Time Interval': ''
+
+    if(typeof this.metaData[colName] === 'undefined'){
+      var sampleMetadata = {
+        'Mean': 25,
+        'Standard Deviation': 9.3,
+        'Greatest Value': 112,
+        'Lowest Value': -83,
+        'Units': '',
+        'Data Type': '',
+        'General Category': '',
+        'Time Interval': ''
+      }
+
+      this.clicks += 1;
+      sampleMetadata['Mean'] += this.clicks;
+      this.setState({metaData: sampleMetadata});
+      this.metaData[colName] = sampleMetadata;
+    } else {
+      this.setState({metaData: this.metaData[colName]});
     }
-    this.setState({metaData: sampleMetadata});
+
+    console.log(this.metaData);
   }
 
   //enables propogation of selection back to this scope from
@@ -37,6 +51,8 @@ class ConfigParentView extends React.Component {
     this.setState({selectedColumn: selected});
     this.fetchMetadata(selected);
   }
+
+
 
   render() {
 
@@ -48,7 +64,10 @@ class ConfigParentView extends React.Component {
               <div>Current Selection: {this.state['selectedColumn']}</div>
             </div>
             <div className="col-sm-3">
-              <ConfigMetadataView selectedCol={this.state['selectedColumn']} metaData={this.state['Metadata']}/>
+              <ConfigMetadataView
+                selectedCol={this.state['selectedColumn']}
+                metaData={this.state.metaData}
+                updateDownloadedMetadata={this.updateDownloadedMetadata}/>
             </div>
             <div className="col-sm-6">
                 <div className="card-body">
