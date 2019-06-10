@@ -84,7 +84,7 @@ class DataManager():
         metaDataJson = ""
         metaDataLoc = "MD" + sessionId
 
-        metaDataJson = self.redis.get(metaDataLoc)
+        metaDataJson = json.loads(self.redis.get(metaDataLoc))
 
 
         return json.loads(metaDataJson)
