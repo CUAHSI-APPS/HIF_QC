@@ -2,6 +2,7 @@ import sys
 #sys.path.append("..")
 from flask import Flask, jsonify, json, request
 from Backend.Classes.Data import DataManager
+from Backend.Classes.Statistics import getBasicStatistics
 from redis import Redis
 
 app = Flask(__name__)
@@ -51,6 +52,21 @@ def get_data(sessionId):
 	data = dataManager.readAndLoadData(fileName, numRows)
 
 	return jsonify(data)
+
+'''
+	Endpoint: get_stats
+	Description: Returns stats for all columns!
+	Example call: /stats/fa3cf742-7c1d-11e9-be79-0242ac1b0005
+	Arguments: sessionId - uuid,
+'''
+@app.route('/stats/<sessionId>/')
+def get_stats(sessionId):
+	fileName = dataManager.retrieveFileLoc(sessionId)
+	data = dataManager.readAndLoadData(fileName)
+	stats = []
+	for col in data:
+		stats.append(getBasicStatistics(col))
+	return jsonify(stats)
 
 # Run Main
 if __name__ == '__main__':
