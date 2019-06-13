@@ -66,6 +66,7 @@ class DataManager():
         with open(filePath, 'r') as file:
             df = pd.read_csv(file)
             df = df.where((pd.notnull(df)), None)
+            dataColList = list(set(list(df)) & set(dataColList))
             subframe = df[dataColList]
 
         return subframe

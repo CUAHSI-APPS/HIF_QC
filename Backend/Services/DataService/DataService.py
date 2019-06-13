@@ -80,7 +80,7 @@ def get_stats(sessionId):
 		statColumnList = jsonConfig['Columns']
 
 		fileName = dataManager.retrieveFileLoc(sessionId)
-		dataColumns = dataManager.retrieveOnlyDataCols(fileName,statColumnList)
+		dataColumns = dataManager.retrieveOnlyDataCols(fileName,statColumnList, None)
 		stats = {}
 		for columnName in dataColumns:
 			stats[columnName] = getBasicStatistics( dataColumns[columnName])
