@@ -12,15 +12,15 @@ dataManager = DataManager(redis)
 @app.route('/')
 def index():
 
-	# Try
-	try:
-		print("Working")
-		return("working")
+	obj = {}
 
-	# Except
-	except e:
-		print(str(e))
-		return False, str(e)
+	redis.set("test", "3f48")
+	obj['debug'] = redis.get("test")
+
+	print(obj)
+
+	return redis.get("test")
+	# return jsonify(obj)
 
 
 @app.route('/cols/<sessionId>', methods=['GET'])
@@ -40,6 +40,8 @@ def get_columns(sessionId):
 	Example call: /data/fa3cf742-7c1d-11e9-be79-0242ac1b0005?num_rows=20
 	Arguments: sessionId - uuid,
 				num_rows[optional] - int
+	An error occured where redis was unable to retrieve the correct file path from this
+	method. Instead it returned none. :/ Restarting redis fixed the problem, but I don't know what happened.
 '''
 @app.route('/data', methods=['GET'])
 def get_data():
@@ -51,8 +53,7 @@ def get_data():
 	if numRows is not None: numRows = int(numRows)
 
 	filePath = dataManager.retrieveFileLoc(request.args.get('sessionId'))
-	data['Debug'] = filePath
-	# data = dataManager.readAndLoadData(fileName, numRows)
+	data = dataManager.readAndLoadData(filePath, numRows)
 
 	return jsonify(data)
 
@@ -68,12 +69,12 @@ def get_data():
 '''
 @app.route('/data/downsampled/<sessionId>', methods=['POST'])
 def get_downsampled_data(sessionId):
+	requestContent = request.json
 
+	filePath = dataManager.retrieveFileLoc(sessionId)
+	data = dataManager.retrieveOnlyDataCols(filePath, requestContent['dataColList'])
 
-	# fileName = dataManager.retrieveFileLoc(sessionId)
-	# data = dataManager.readAndLoadData(fileName, numRows)
-
-	return jsonify(request.data)
+	return data.to_json()
 
 # Run Main
 if __name__ == '__main__':
