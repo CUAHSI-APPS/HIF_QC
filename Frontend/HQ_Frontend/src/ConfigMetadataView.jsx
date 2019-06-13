@@ -5,11 +5,7 @@ import Button from 'react-bootstrap/Button';
 
 
 class ConfigMetadataView extends React.Component {
-  static defaultProps = {
-        metaData: {
-            'key': []
-        }
-    };
+
 
   constructor(props) {
     super(props);
@@ -17,7 +13,9 @@ class ConfigMetadataView extends React.Component {
       show:false,
     };
 
-    this.temp = JSON.parse(JSON.stringify(this.props.metaData));
+    if(isDefined(this.props.metaData)){
+      this.temp = JSON.parse(JSON.stringify(this.props.metaData));
+    }
 
     this.handleClose = this.handleClose.bind(this);
     this.handleShow = this.handleShow.bind(this);
@@ -50,7 +48,9 @@ class ConfigMetadataView extends React.Component {
    handleShow() {
      //does a deep copy to ensure changes are not propogated back to our main state
      // if not explicitly saved
-     this.temp = JSON.parse(JSON.stringify(this.props.metaData));
+     if(isDefined(this.props.metaData)){
+       this.temp = JSON.parse(JSON.stringify(this.props.metaData));
+     }
 
 
 
@@ -58,6 +58,23 @@ class ConfigMetadataView extends React.Component {
    }
 
   render() {
+    let md, mdedit;
+
+    if( isDefined(this.props.metaData) ){
+      md = Object.keys(this.props.metaData).map( (key, index) => (
+        <li key={'li'+key}>{key} : <span key={key}> {this.props.metaData[key]} </span> </li>
+      ))
+
+      mdedit = Object.keys(this.props.metaData).map( (key, index) => (
+        <li key={'mli'+key}>{key} : <input type='text' key={key} field={key} defaultValue={this.props.metaData[key]} onChange={this.manageInput} /> </li>
+      ))
+    }
+    else{
+      md = null;
+      mdedit = null;
+    }
+
+
 
     return (
       <>
@@ -66,9 +83,7 @@ class ConfigMetadataView extends React.Component {
             <div className="md-display">
             <ul>
               <li>Name: <span>{this.props.selectedCol}</span></li>
-              {Object.keys(this.props.metaData).map( (key, index) => (
-                <li key={'li'+key}>{key} : <span key={key}> {this.props.metaData[key]} </span> </li>
-              ))}
+              {md}
             </ul>
             </div>
             <div className="text-center pt-3">
@@ -83,9 +98,7 @@ class ConfigMetadataView extends React.Component {
             <Modal.Body>
             <ul>
               <li>Name: <span>{this.props.selectedCol}</span></li>
-              {Object.keys(this.props.metaData).map( (key, index) => (
-                <li key={'mli'+key}>{key} : <input type='text' key={key} field={key} defaultValue={this.props.metaData[key]} onChange={this.manageInput} /> </li>
-              ))}
+              {mdedit}
             </ul>
             </Modal.Body>
             <Modal.Footer>

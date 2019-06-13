@@ -41,16 +41,39 @@ def get_columns(sessionId):
 	Arguments: sessionId - uuid,
 				num_rows[optional] - int
 '''
-@app.route('/data/<sessionId>', methods=['GET'])
-def get_data(sessionId):
+@app.route('/data', methods=['GET'])
+def get_data():
 	cols = []
-	numRows = request.args.get('num_rows')
+	data = {}
+	numRows = request.args.get('numRows')
+	sessionId = request.args.get('sessionId')
 
 	if numRows is not None: numRows = int(numRows)
-	fileName = dataManager.retrieveFileLoc(sessionId)
-	data = dataManager.readAndLoadData(fileName, numRows)
+
+	filePath = dataManager.retrieveFileLoc(request.args.get('sessionId'))
+	data['Debug'] = filePath
+	# data = dataManager.readAndLoadData(fileName, numRows)
 
 	return jsonify(data)
+
+
+'''
+	Endpont: get_downsampled_data
+	Expected Post: {
+		dataColList: <list>,
+		indexCol: <string>,
+		timeStep: <int> (minutes),
+		rateOfDownsample: <int> (eg. aggregrate every 3 values)
+	}
+'''
+@app.route('/data/downsampled/<sessionId>', methods=['POST'])
+def get_downsampled_data(sessionId):
+
+
+	# fileName = dataManager.retrieveFileLoc(sessionId)
+	# data = dataManager.readAndLoadData(fileName, numRows)
+
+	return jsonify(request.data)
 
 # Run Main
 if __name__ == '__main__':

@@ -32,10 +32,13 @@ class ConfigParentView extends React.Component {
     //tests should be a list I suppose, of objects
 
     this.testTypes = [
-      {'Type':'Basic Outlier Test', 'Parameters':[
-        {'Name':'Max', 'Data Type':'Float'},
-        {'Name':'Min', 'Data Type':'Float'}
-      ]},
+      {'Type':'Basic Outlier Test',
+        'Parameters':[
+          {'Name':'Max', 'Data Type':'Float', 'Default Value': 10},
+          {'Name':'Min', 'Data Type':'Float'}
+        ],
+        'Validation Reqs': ['"Max" > "Min"'],
+        'Output': 'null'},
       {'Type':'Repeat Value Test', 'Parameters':[
         {'Name': 'Repeating Threshold', 'Data Type': 'Integer'}
       ]},
