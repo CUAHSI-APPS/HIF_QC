@@ -59,7 +59,7 @@ class DataManager():
         return dataDict
 
     #After people idntify which cols they want
-    def retrieveOnlyDataCols(self, filePath, dataColList):
+    def retrieveOnlyDataCols(self, filePath, dataColList, indexName):
         # variables
         subframe = None
 
