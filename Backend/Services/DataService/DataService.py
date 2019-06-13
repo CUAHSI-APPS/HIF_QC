@@ -55,18 +55,35 @@ def get_data(sessionId):
 
 '''
 	Endpoint: get_stats
-	Description: Returns stats for all columns!
+	Description: Returns stats for specified columns in uploaded json
+	Requirement: The upload must have a mime type of application/json 
 	Example call: /stats/fa3cf742-7c1d-11e9-be79-0242ac1b0005
-	Arguments: sessionId - uuid,
+	Arguments: sessionId - uuid, a json file with column names
+	Example JSON:
+	{'Columns': ['cola','colb','colc']}
+	To test with curl: curl -d '{"key1":1}' -X POST 
+	http://localts/63f7d7dc-8e08-11e9-a87f-0242ac140006 
+	-H "Content-Type: application/json"
 '''
-@app.route('/stats/<sessionId>/')
+@app.route('/stats/<sessionId>', methods=['Post'])
 def get_stats(sessionId):
-	fileName = dataManager.retrieveFileLoc(sessionId)
-	data = dataManager.readAndLoadData(fileName)
-	stats = []
-	for col in data:
-		stats.append(getBasicStatistics(col))
-	return jsonify(stats)
+	print (request.form)
+	dataColumns = ''
+	statColumnList = ''
+	if request.is_json:
+		jsonConfig = request.json
+		statColumnList = jsonConfig['Columns']
+
+		fileName = dataManager.retrieveFileLoc(sessionId)
+		dataColumns = dataManager.retrieveOnlyDataCols(fileName,statColumnList)
+		stats = {}
+		for columnName in dataColumns:
+			stats[columnName] = getBasicStatistics( dataColumns[columnName])
+		#data = dataManager.readAndLoadData(fileName)
+		#stats = []
+		#for col in data:
+		#	stats.append(getBasicStatistics(col))
+	return jsonify(stats), 200 #jsonify(stats)
 
 # Run Main
 if __name__ == '__main__':
