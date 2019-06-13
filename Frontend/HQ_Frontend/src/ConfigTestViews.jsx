@@ -47,7 +47,12 @@ class ConfigTestViews extends React.Component {
                 <button disabled id="btnRmvTest" className="btn btn-secondary" onClick={this.emptyFun}>Remove Test</button>
             </div>
         </div>
-        <AddTestModal active={this.state.addTestModal} testInfo={this.props.testTypes} handleModalClose={this.handleModalClose}/>
+        <AddTestModal
+        active={this.state.addTestModal}
+        testInfo={this.props.testTypes}
+        handleModalClose={this.handleModalClose}
+        selectedDS={this.props.selectedCol}
+        dataSetMetaData={this.props.metaData}/>
       </>
     );
   }
