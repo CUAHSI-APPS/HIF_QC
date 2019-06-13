@@ -58,19 +58,23 @@ class DataManager():
 
         return dataDict
 
-    #After people idntify
-    def retrieveOnlyDataCols(self, filePath, dataColList):
+    #After people idntify which cols they want
+    def retrieveOnlyDataCols(self, filePath, dataColList, indexName):
         # variables
-        dataDict = {}
+        subframe = None
 
         with open(filePath, 'r') as file:
             df = pd.read_csv(file)
             df = df.where((pd.notnull(df)), None)
-            for col in list(df.columns):
-                if col in dataColList:
-                    dataDict[col] = list(df[col])
+            subframe = df[dataColList]
 
-        return dataDict
+        return subframe
+
+    def downSample(self, df, timeSeriesCol, timeStep, numberOfBins):
+        rateOfDownsample = '' + timeStep + numberOfBins
+        df = df.resample(rateOfDownsample, on=timeSeriesCol).mean()
+
+        return df
 
     def storeMetadata(self, sessionId, metaData):
         metaDataLoc = "MD" + sessionId

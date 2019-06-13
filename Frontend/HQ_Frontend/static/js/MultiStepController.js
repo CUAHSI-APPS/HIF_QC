@@ -21,7 +21,11 @@ function NextProgressBar(NextStep) {
             });
         }
 
-        $('#StepPlaceholder').load("/view/SetStep/Step_" + NextStep);
+        $('#StepPlaceholder').load("/view/SetStep/Step_" + NextStep, function(){
+          if(NextStep === 3){
+            loadReactApp();
+          }
+        });
     }
 }
 
