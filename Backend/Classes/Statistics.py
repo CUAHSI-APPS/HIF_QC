@@ -27,18 +27,22 @@ def medianArrayValue(array):
         return 0
 def interquartileQuartileRanges(array):
     try:
-        twentyFifthPercentile, SeventyFifthithPercentile = np.percentile(array, [75 ,25])
+        twentyFifthPercentile, SeventyFifthithPercentile = np.percentile(array, [25,75])
         return twentyFifthPercentile, SeventyFifthithPercentile, SeventyFifthithPercentile - twentyFifthPercentile
     except:
         return 0,0,0
-def getBasicStatistics(array,subset=None):
-    array = list(filter(None,array))
-    array = list(filter(np.nan, array))
+# assuming a pandas dataframe for df
+def getBasicStatistics(df,subset=None):
+    df.replace([None, np.inf, -np.inf], np.nan).dropna(how="all")
+    array = list(df)
+    if len(array) == 0:
+        return {"Message":"No statistics for this column."}
+    #array = list(filter(np.nan, array))
     maxValue = maxArrayValue(array)
     minValue = minArrayValue(array)
     rangeValue = maxValue - minValue
     medianValue = medianArrayValue(array)
     meanValue = meanArrayValue(array)
     q75, q25, iqr = interquartileQuartileRanges(array)
-    return {"Max" : maxValue, "Min" : minValue, "Median": medianValue, "Range": rangeValue, "Mean": meanValue, "Q25" : q25, "Q75": q75, "IQR": iqr }
+    return {"Max" : maxValue, "Min" : minValue, "Median": medianValue, "Range": rangeValue, "Mean": meanValue, "Q25" : q25, "Q75": q75, "Interquartile Range": iqr }
     
