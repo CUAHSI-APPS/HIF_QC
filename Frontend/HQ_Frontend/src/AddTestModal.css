@@ -1,0 +1,12 @@
+.wide-modal{
+  min-width: 85vw;
+  max-width: 95vw;
+}
+
+.test{
+  border: 1px red solid;
+}
+
+.height-governor{
+  max-height: 95vh;
+}
