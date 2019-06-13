@@ -33,6 +33,7 @@ def interquartileQuartileRanges(array):
         return 0,0,0
 def getBasicStatistics(array,subset=None):
     array = list(filter(None,array))
+    array = list(filter(np.nan, array))
     maxValue = maxArrayValue(array)
     minValue = minArrayValue(array)
     rangeValue = maxValue - minValue
