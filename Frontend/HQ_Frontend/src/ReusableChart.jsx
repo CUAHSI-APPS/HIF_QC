@@ -9,8 +9,8 @@ class ReusableChart extends React.Component {
 
   render(){
     return(
-      <VictoryChart>
-        <VictoryScatter/>
+      <VictoryChart scale={{x:"time"}}>
+        <VictoryLine data={this.props.data}/>
       </VictoryChart>
     )
   }
