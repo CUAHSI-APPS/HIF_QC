@@ -1,3 +1,9 @@
+ul,li{
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+}
+
 #tablePlaceholder{
   max-width: 90vw;
   overflow-x:scroll;

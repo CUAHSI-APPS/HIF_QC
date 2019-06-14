@@ -11,7 +11,7 @@ class ConfigTestViews extends React.Component {
     this.state = {addTestModal: false,
                   modTestModal: false};
 
-    this.emptyFun = this.emptyFun.bind(this);
+
     this.handleAddTest = this.handleAddTest.bind(this);
     this.handleModTest = this.handleModTest.bind(this);
     this.handleModalClose = this.handleModalClose.bind(this);
@@ -28,11 +28,13 @@ class ConfigTestViews extends React.Component {
   }
 
   handleModalClose(){
+    this.props.clearData();
     this.setState({addTestModal:false});
     this.setState({modTestModal:false});
   }
 
-  emptyFun(){}
+
+// We need to disable the add test button until data is loaded!
 
   render(){
     return(
@@ -42,7 +44,7 @@ class ConfigTestViews extends React.Component {
             <select id="selectTest" multiple className="form-control selectBox">
             </select>
             <div className="button-group text-center pt-3">
-                <button  id="btnAddTest" className="btn btn-secondary" onClick={this.handleAddTest}>Add Test</button>
+                <button disabled={!this.props.dataLoaded} id="btnAddTest" className="btn btn-secondary" onClick={this.handleAddTest}>Add Test</button>
                 <button disabled id="btnModTest" className="btn btn-secondary" onClick={this.handleModTest}>Modify Test</button>
                 <button disabled id="btnRmvTest" className="btn btn-secondary" onClick={this.emptyFun}>Remove Test</button>
             </div>
@@ -53,7 +55,8 @@ class ConfigTestViews extends React.Component {
         handleModalClose={this.handleModalClose}
         selectedDS={this.props.selectedCol}
         dataSetMetaData={this.props.metaData}
-        data={this.props.retrievedData}/>
+        data={this.props.retrievedData}
+        addData={this.props.addData}/>
       </>
     );
   }

@@ -12,21 +12,8 @@ class ConfigParentView extends React.Component {
   constructor(props) {
     super(props);
 
+    //Variable initializations
     this.clicks = 0;
-
-    this.state = {selectedColumn: ''};
-    this.colNames = JSON.parse(sessionStorage.getItem('dataCols'));
-    this.metaData = {};
-    this.testTypes = [];
-
-    this.fetchTestTypes();
-
-    this.fetchMetadata = this.fetchMetadata.bind(this);
-    this.updateSelectedColumn = this.updateSelectedColumn.bind(this);
-    this.updateDownloadedMetadata = this.updateDownloadedMetadata.bind(this);
-
-
-    this.getData = this.getData.bind(this);
     this.dataCallJSON = {
       "dataColList": [],
       "indexCol": '',
@@ -34,12 +21,26 @@ class ConfigParentView extends React.Component {
       "rateOfDownsample": 3
     }
     this.dataSourceEndpoint = "http://localhost:8082/data/vis/downsampled/"
+    this.state = {selectedColumn: '', dataLoaded:false};
+    this.colNames = JSON.parse(sessionStorage.getItem('dataCols'));
+    this.metaData = {};
+    this.testTypes = [];
+
+    //bindings
+    this.fetchMetadata = this.fetchMetadata.bind(this);
+    this.updateSelectedColumn = this.updateSelectedColumn.bind(this);
+    this.updateDownloadedMetadata = this.updateDownloadedMetadata.bind(this);
+    this.clearData = this.clearData.bind(this);
+    this.getData = this.getData.bind(this);
+    this.addData = this.addData.bind(this);
+
+    //function calls on construct
+    this.fetchTestTypes();
 
   }
 
   fetchTestTypes(){
     //replace with a call to server here
-
     //tests should be a list I suppose, of objects
 
     this.testTypes = [
@@ -54,12 +55,12 @@ class ConfigParentView extends React.Component {
         {'Name': 'Repeating Threshold', 'Data Type': 'Integer'}
       ]},
       {'Type':'Spatial Inconsistency', 'Parameters':[
-        {'Name':'Comparision Data', 'Data Type': 'Vector'}, //column name from the same file
+        {'Name':'Comparision Data', 'Data Type': 'TimeSeries'}, //column name from the same file
         {'Name':'Difference Threshold (%)', 'Data Type': 'Integer'}  //user will be able to select a different column
                                                           //from thier dataset
       ] },
       {'Type': 'Machine Learning', 'Parameters':[
-        {'Name': 'Training Set', 'Data Type': 'Vector'}, //column name
+        {'Name': 'Training Set', 'Data Type': 'TimeSeries'}, //column name
         {'Name': 'Percentage Training Data', 'Data Type' : 'Integer'},
         {'Name': 'Percentage Test Data', 'Data Type' : 'Integer'}
       ]}
@@ -100,7 +101,11 @@ class ConfigParentView extends React.Component {
   // child scope
   //callback function
   updateSelectedColumn(selected){
+    //set new selected column
     this.setState({selectedColumn: selected});
+
+    //reset for new download of data
+    this.setState({dataLoaded: false});
     this.fetchMetadata(selected);
     this.getData(selected);
   }
@@ -138,10 +143,57 @@ class ConfigParentView extends React.Component {
             return x;
           })
           console.log(data);
-          this.setState({retrievedData: data})
+
+          this.setState({retrievedData: [data]});
+          this.setState({dataLoaded: true});
         }
       );
 
+   }
+
+   //new datastreams is an array of datastreams by default
+   addData(newDataStreams){
+     this.dataCallJSON['indexCol'] = sessionStorage.getItem('indexCol');
+     this.dataCallJSON['dataColList'] = newDataStreams;
+     let endpoint = this.dataSourceEndpoint + sessionStorage.getItem('sessionId');
+
+     //makeAsyncCall
+     fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.dataCallJSON)
+      }).then( (response) => {
+            return response.json();
+        }
+      ).then((json) => {
+
+        let newData = this.state.retrievedData;
+
+        for(let stream in newDataStreams){
+          var data = json[newDataStreams[stream]].map((x) => {
+            if( x['y'] === 'null'){
+              x['y'] = null;
+            }
+            x['x'] = new Date(Date.parse(x['x']))
+            return x;
+          })
+
+          newData.push(data);
+
+          this.setState({retrievedData:newData});
+
+        }
+
+      }
+      );
+   }
+
+   clearData(){
+      if(this.state.retrievedData.length > 1)
+        this.getData(this.state.selectedColumn);
    }
 
 
@@ -167,7 +219,10 @@ class ConfigParentView extends React.Component {
               selectedCol={this.state['selectedColumn']}
               metaData={this.state.metaData}
               testTypes={this.testTypes}
-              retrievedData={this.state.retrievedData}/>
+              retrievedData={this.state.retrievedData}
+              clearData={this.clearData}
+              addData={this.addData}
+              dataLoaded={this.state.dataLoaded}/>
             </div>
         </div>
     </div>
