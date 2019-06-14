@@ -96,9 +96,11 @@ function stepThreeCleanup(){
       dataColumns.push($(this).attr('value'));
     })
 
+    var dateTimeCol = $('#dateTimeBox1').children("option:selected").val();
 
-    console.log(dataColumns);
+    sessionStorage.setItem('indexCol', dateTimeCol);
     sessionStorage.setItem('dataCols', JSON.stringify(dataColumns));
+
     //upload selected data cols for stats analysis
 }
 
