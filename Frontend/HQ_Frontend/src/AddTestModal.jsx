@@ -19,7 +19,7 @@ class AddTestModal extends React.Component {
 
     this.handleSave = this.handleSave.bind(this);
     this.populateTestList = this.populateTestList.bind(this);
-    this.getData = this.getData.bind(this);
+
   }
 
     //in case we need to remove data from state
@@ -31,10 +31,6 @@ class AddTestModal extends React.Component {
      this.props.handleModalClose();
    }
 
-   getData(selectedDataStream){
-     //makeAsyncCall
-     console.log(selectedDataStream);
-   }
 
    populateTestList(){
 
@@ -46,7 +42,6 @@ class AddTestModal extends React.Component {
        <option>{test['Type']}</option>
      ))
 
-     this.getData(this.props.selectedDS);
 
 
     return(
@@ -57,7 +52,7 @@ class AddTestModal extends React.Component {
           <Modal.Body>
             <div className="row">
               <div className="test col-sm-10">
-                <ReusableChart data={this.state.retrievedData}
+                <ReusableChart data={this.props.data}
                                metaData={this.props.dataSetMetaData}
                                />
               </div>

@@ -1,6 +1,7 @@
 import ConfigColumnList from './ConfigColumnList.jsx';
 import ConfigMetadataView from './ConfigMetadataView.jsx';
 import ConfigTestViews from './ConfigTestViews.jsx';
+import AddTestModal from './AddTestModal.jsx'
 
 
 'use strict';
@@ -23,6 +24,16 @@ class ConfigParentView extends React.Component {
     this.fetchMetadata = this.fetchMetadata.bind(this);
     this.updateSelectedColumn = this.updateSelectedColumn.bind(this);
     this.updateDownloadedMetadata = this.updateDownloadedMetadata.bind(this);
+
+
+    this.getData = this.getData.bind(this);
+    this.dataCallJSON = {
+      "dataColList": [],
+      "indexCol": '',
+      "timeStep": 10,
+      "rateOfDownsample": 3
+    }
+    this.dataSourceEndpoint = "http://localhost:8082/data/vis/downsampled/"
 
   }
 
@@ -91,11 +102,48 @@ class ConfigParentView extends React.Component {
   updateSelectedColumn(selected){
     this.setState({selectedColumn: selected});
     this.fetchMetadata(selected);
+    this.getData(selected);
   }
 
   updateDownloadedMetadata(selected, modifiedMetaData){
     this.metaData[selected] = modifiedMetaData;
   }
+
+
+   getData(selectedDataStream){
+
+     this.dataCallJSON['indexCol'] = sessionStorage.getItem('indexCol');
+     this.dataCallJSON['dataColList'] = [selectedDataStream];
+     let endpoint = this.dataSourceEndpoint + sessionStorage.getItem('sessionId');
+
+     console.log(endpoint, this.dataCallJSON);
+
+     //makeAsyncCall
+     fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.dataCallJSON)
+      }).then( (response) => {
+            return response.json();
+        }
+      ).then((json) => {
+          var data = json[selectedDataStream].map((x) => {
+            if( x['y'] === 'null'){
+              x['y'] = null;
+            }
+            x['x'] = new Date(Date.parse(x['x']))
+            return x;
+          })
+          console.log(data);
+          this.setState({retrievedData: data})
+        }
+      );
+
+   }
+
 
 
 
@@ -118,7 +166,8 @@ class ConfigParentView extends React.Component {
               <ConfigTestViews
               selectedCol={this.state['selectedColumn']}
               metaData={this.state.metaData}
-              testTypes={this.testTypes}/>
+              testTypes={this.testTypes}
+              retrievedData={this.state.retrievedData}/>
             </div>
         </div>
     </div>

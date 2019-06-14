@@ -52,7 +52,8 @@ class ConfigTestViews extends React.Component {
         testInfo={this.props.testTypes}
         handleModalClose={this.handleModalClose}
         selectedDS={this.props.selectedCol}
-        dataSetMetaData={this.props.metaData}/>
+        dataSetMetaData={this.props.metaData}
+        data={this.props.retrievedData}/>
       </>
     );
   }

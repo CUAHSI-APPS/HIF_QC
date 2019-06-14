@@ -5,6 +5,7 @@
 from flask import jsonify
 import json
 import pandas as pd
+import datetime as dt
 
 '''
 Class: Data Manager
@@ -59,21 +60,32 @@ class DataManager():
         return dataDict
 
     #After people idntify which cols they want
-    def retrieveOnlyDataCols(self, filePath, dataColList, indexName):
+    def retrieveOnlyDataCols(self, filePath, dataColList, indexName=None):
         # variables
         subframe = None
 
         with open(filePath, 'r') as file:
             df = pd.read_csv(file)
-            df = df.where((pd.notnull(df)), None)
-            dataColList = list(set(list(df)) & set(dataColList))
+            df.apply(pd.to_numeric, errors='coerce').fillna(df)
+
+            if indexName is not None:
+                # we will have to do some error checking here
+                # this function is dangerous af
+                df[indexName] = pd.to_datetime(df[indexName])
+                df = df.set_index(indexName)
+
             subframe = df[dataColList]
 
         return subframe
 
-    def downSample(self, df, timeSeriesCol, timeStep, numberOfBins):
-        rateOfDownsample = '' + timeStep + numberOfBins
-        df = df.resample(rateOfDownsample, on=timeSeriesCol).mean()
+    def downSample(self, df, timeStep, numberOfBins):
+
+        if timeStep is not None:
+            rateOfDownsample = str(timeStep*numberOfBins) + 'T'
+            df = df.resample(rateOfDownsample).mean()
+
+        #reformat datetime index
+        df.index = df.index.map(lambda x: dt.datetime.strftime(x, '%Y-%m-%dT%H:%M:%SZ'))
 
         return df
 
