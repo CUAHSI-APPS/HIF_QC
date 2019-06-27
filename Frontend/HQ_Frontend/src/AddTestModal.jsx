@@ -8,32 +8,30 @@ import ReusableChart from './ReusableChart.jsx';
 import './AddTestModal.css';
 
 class AddTestModal extends React.Component {
-  // static defaultProps = {
-  //       testInfo: [],
-  //   };
 
   constructor(props) {
     super(props);
 
     this.state = {subModalView:false,
                   visualizedDataStreams:[],
-                  currentTest: this.props.testInfo[0]['Type']}
+                  currentTest: this.props.getFirstDefaultTest()['Type']}
 
     //get columns from session storage
     this.colNames = JSON.parse(sessionStorage.getItem('dataCols'))
 
     this.handleSave = this.handleSave.bind(this);
-    this.populateTestList = this.populateTestList.bind(this);
     this.handleAddData = this.handleAddData.bind(this);
     this.openSubMenu = this.openSubMenu.bind(this);
     this.closeSubmenu = this.closeSubmenu.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.handleSelections = this.handleSelections.bind(this);
     this.handleTestSelection = this.handleTestSelection.bind(this);
-
+    this.handleRenderDifferentParamInputs = this.handleRenderDifferentParamInputs.bind(this);
+    this.handleValueInput = this.handleValueInput.bind(this);
   }
 
   handleAddData(){
+    //add all selected data stream except the current data stream (slice(1))
     let newDS = this.state.visualizedDataStreams.slice(1);
     this.props.addData(newDS);
     this.closeSubmenu();
@@ -41,57 +39,119 @@ class AddTestModal extends React.Component {
 
   handleClose(){
     this.state.visualizedDataStreams = [this.props.selectedDS];
+
+    let defaultTest = this.props.getFirstDefaultTest();
+    this.setState({currentTest: defaultTest['Type']});
+
     this.props.handleModalClose();
   }
 
-   handleSave(){
-     this.props.handleModalClose();
-   }
+  handleSave(){
+    let possibleTests = [];
+    let defaultTest = {};
 
-   populateTestList(){
+    this.props.addTest(this.props.testJSON);
+    possibleTests = this.props.setPossibleNewTests();
 
-   }
+    if(possibleTests.length != 0){
+      this.setState({currentTest: possibleTests[0]['Type']});
+      this.props.handleModalClose(true);
+    } else {
+      this.props.handleModalClose(false);
+    }
 
-   //submodal Functionality
-   openSubMenu(){
-     this.setState({subModalView:true});
-   }
+  }
 
-   closeSubmenu(){
-     this.setState({subModalView:false});
-   }
 
-   handleSelections(e){
-     let options = e.target.options;
-     let defaultStream = this.props.selectedDS;
 
-     //reset array and set default data stream as our current
-     this.state.visualizedDataStreams = [];
-     this.state.visualizedDataStreams.push(defaultStream);
+  //submodal Functionality
+  openSubMenu(){
+   this.setState({subModalView:true});
+  }
 
-     let selected = this.state.visualizedDataStreams;
+  closeSubmenu(){
+   this.setState({subModalView:false});
+  }
 
-     for(let option in options){
-       if(options[option].selected){
-         selected.push(options[option].value);
-       }
+  handleSelections(e){
+   let options = e.target.options;
+   let defaultStream = this.props.selectedDS;
+
+   //reset array and set default data stream as our current
+   this.state.visualizedDataStreams = [];
+   this.state.visualizedDataStreams.push(defaultStream);
+
+   let selected = this.state.visualizedDataStreams;
+
+   for(let option in options){
+     if(options[option].selected){
+       selected.push(options[option].value);
      }
-
-     console.log(this.state.visualizedDataStreams);
-
    }
 
-   handleTestSelection(e){
-     this.setState({currentTest:e.target.value});
+   console.log(this.state.visualizedDataStreams);
+
+  }
+
+  handleTestSelection(e){
+    let testInfo;
+
+    this.setState({currentTest:e.target.value});
+
+    for(let test in this.props.testInfo){
+       if(this.props.testInfo[test]['Type'] === e.target.value){
+         testInfo = this.props.testInfo[test];
+       }
+    }
+
+    //rebuild json
+    this.props.rebuildJSON(testInfo);
+  }
+
+  handleValueInput(e){
+    let parameterName = e.target.getAttribute('parameter-name');
+    for(let parameter in this.props.testJSON['Parameters']){
+      if(this.props.testJSON['Parameters'][parameter]['Name'] === parameterName){
+        this.props.testJSON['Parameters'][parameter]['Value'] = e.target.value;
+      }
+    }
+    console.log(this.props.testJSON, parameterName, e.target.value);
+  }
+
+  /* Function that manages the output of the correct tags for the data type
+  of a particular parameter. Ultimiately will include error checking.
+  */
+  handleRenderDifferentParamInputs(parameter){
+   let otherColumns;
+
+   switch(parameter['Data Type']){
+      case 'TimeSeries':
+        //get other columns as options
+        otherColumns = this.colNames.map((dataStream) => {
+          if(dataStream !== this.props.selectedDS){
+               return <option>{dataStream}</option>
+           }
+        });
+
+        return(<select parameter-name={parameter['Name']} onChange={this.handleValueInput}>{otherColumns}</select>)
+        break;
+
+      default:
+        return(<input parameter-name={parameter['Name']} onChange={this.handleValueInput}/>)
+        break;
    }
+
+  }
 
   render(){
     let testOptions, testConfigurations;
     let dataStreamOptions;
+    let inputTagGroup;
 
-    testOptions = this.props.testInfo.map((test) => (
-       <option>{test['Type']}</option>
-     ));
+    //pass test info down as subset of possible testTypes
+    testOptions = this.props.testInfo.map((test) => {
+      return(<option>{test['Type']}</option>);
+    });
 
      dataStreamOptions = this.colNames.map((dataStream) => {
        if(dataStream !== this.props.selectedDS){
@@ -99,24 +159,30 @@ class AddTestModal extends React.Component {
         }
      });
 
+     //Loading Test Configurations
+     // Need to push this into a function
      testConfigurations = this.props.testInfo.map((test) => {
           if(!isDefined(this.state.currentTest)){
             return(null);
           }
           else if(this.state.currentTest === test['Type']){
             return(
-              test['Parameters'].map((parameter) => (
-                  <li><div className="row">
-                    <div className="col-sm-5">{parameter['Name']}:</div>
-                    <div className="col-sm-7"> <input/> </div>
-                  </div></li>
-              ))
+              test['Parameters'].map((parameter) => {
+                  inputTagGroup = this.handleRenderDifferentParamInputs(parameter);
+                  return(
+                    <li><div className="row">
+                      <div className="col-sm-5">{parameter['Name']}:</div>
+                      <div className="col-sm-7">{inputTagGroup}</div>
+                    </div></li>
+                  )
+              })
             )
           }
           else {
             return(null);
           }
       });
+
 
 
 
