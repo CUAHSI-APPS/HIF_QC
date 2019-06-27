@@ -25,6 +25,7 @@ class ConfigParentView extends React.Component {
     this.colNames = JSON.parse(sessionStorage.getItem('dataCols'));
     this.metaData = {};
     this.testTypes = [];
+    this.allTests = {};
 
     //bindings
     this.fetchMetadata = this.fetchMetadata.bind(this);
@@ -33,6 +34,9 @@ class ConfigParentView extends React.Component {
     this.clearData = this.clearData.bind(this);
     this.getData = this.getData.bind(this);
     this.addData = this.addData.bind(this);
+    this.updateSelectedTests = this.updateSelectedTests.bind(this);
+    this.addTest = this.addTest.bind(this);
+    this.deleteTest = this.deleteTest.bind(this);
 
     //function calls on construct
     this.fetchTestTypes();
@@ -65,10 +69,6 @@ class ConfigParentView extends React.Component {
         {'Name': 'Percentage Test Data', 'Data Type' : 'Integer'}
       ]}
     ];
-  }
-
-  affixTestToCol(colName){
-
   }
 
 
@@ -106,13 +106,17 @@ class ConfigParentView extends React.Component {
 
     //reset for new download of data
     this.setState({dataLoaded: false});
+    this.setState({selectedColUpdated:true});
     this.fetchMetadata(selected);
     this.getData(selected);
+    this.updateSelectedTests(selected);
   }
 
   updateDownloadedMetadata(selected, modifiedMetaData){
     this.metaData[selected] = modifiedMetaData;
   }
+
+
 
 
    getData(selectedDataStream){
@@ -121,7 +125,6 @@ class ConfigParentView extends React.Component {
      this.dataCallJSON['dataColList'] = [selectedDataStream];
      let endpoint = this.dataSourceEndpoint + sessionStorage.getItem('sessionId');
 
-     console.log(endpoint, this.dataCallJSON);
 
      //makeAsyncCall
      fetch(endpoint, {
@@ -142,7 +145,6 @@ class ConfigParentView extends React.Component {
             x['x'] = new Date(Date.parse(x['x']))
             return x;
           })
-          console.log(data);
 
           this.setState({retrievedData: [data]});
           this.setState({dataLoaded: true});
@@ -196,8 +198,33 @@ class ConfigParentView extends React.Component {
         this.getData(this.state.selectedColumn);
    }
 
+   //test management functions
 
+   //Updates the current class of selected test wehn the selected column changes
+   updateSelectedTests(selectedCol){
+     if(!isDefined(this.allTests[selectedCol])){
+       this.allTests[selectedCol] = [];
+     }
 
+     this.setState({activeTests: this.allTests[selectedCol]});
+   }
+
+   //callback function to be called from a deeper scope when a test is added
+   addTest(newTest){
+     this.allTests[this.state.selectedColumn].push(JSON.parse(JSON.stringify(newTest)));
+     this.setState({activeTests: this.allTests[this.state.selectedColumn]});
+
+   }
+
+   //callback function to be called from a deeper scope when a function is deleted
+   deleteTest(delTestID){
+     for (var test in this.allTests[this.state.selectedColumn]){
+       if(this.allTests[this.state.selectedColumn][test]['ID'] === delTestID){
+         this.allTests[this.state.selectedColumn].splice(test,1);
+       }
+     }
+     this.setState({activeTests: this.allTests[this.state.selectedColumn]});
+   }
 
   render() {
 
@@ -222,7 +249,10 @@ class ConfigParentView extends React.Component {
               retrievedData={this.state.retrievedData}
               clearData={this.clearData}
               addData={this.addData}
-              dataLoaded={this.state.dataLoaded}/>
+              dataLoaded={this.state.dataLoaded}
+              activeTests={this.state.activeTests}
+              addTest={this.addTest}
+              deleteTest={this.deleteTest}/>
             </div>
         </div>
     </div>
