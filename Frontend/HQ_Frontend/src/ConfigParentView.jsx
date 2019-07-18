@@ -214,6 +214,12 @@ class ConfigParentView extends React.Component {
      this.allTests[this.state.selectedColumn].push(JSON.parse(JSON.stringify(newTest)));
      this.setState({activeTests: this.allTests[this.state.selectedColumn]});
 
+      // not the greatest I know...
+      if (Object.keys(this.allTests).length > 0) {
+        var nextStepButton = document.getElementById('nextTaskStep3');
+        nextStepButton.removeAttribute('disabled');
+      }
+
    }
 
    //callback function to be called from a deeper scope when a function is deleted

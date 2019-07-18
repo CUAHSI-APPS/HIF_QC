@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # compose_flask/app.py
 from Backend.Classes.TicketCounter import SessionTicketCounter
 from Backend.Classes.Data import DataManager

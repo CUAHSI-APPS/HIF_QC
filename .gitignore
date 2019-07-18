@@ -1,2 +1,3 @@
 *.pyc
 .vscode
+Frontend/HQ_Frontend/node_modules/**
