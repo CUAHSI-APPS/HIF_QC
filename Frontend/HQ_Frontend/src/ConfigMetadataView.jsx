@@ -28,12 +28,9 @@ class ConfigMetadataView extends React.Component {
 
     this.temp[field] = e.target.value;
 
-    console.log(this.temp, e.target.value, e.target.getAttribute("field"));
-
   }
 
   handleClose() {
-      console.log(this.props.metaData);
       this.temp = null;
       this.setState({ show: false });
    }

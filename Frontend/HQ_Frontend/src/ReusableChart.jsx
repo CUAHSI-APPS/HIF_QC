@@ -12,7 +12,7 @@ class ReusableChart extends React.Component {
     let charts = this.props.data.map((datastream, index) => {
       let color = index % 4;
 
-      return(    <VictoryLine
+      return(   <VictoryLine
           style={{
              data: { stroke: this.colors[color], strokeWidth: 1 },
              parent: { border: ".25px solid #ccc"}
@@ -23,7 +23,7 @@ class ReusableChart extends React.Component {
     return(
       <VictoryChart scale={{x:"time"}}
           containerComponent={
-              <VictoryZoomContainer downsample={150}/>
+              <VictoryZoomContainer downsample={100}/>
           }>
         {charts}
       </VictoryChart>
