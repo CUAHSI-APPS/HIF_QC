@@ -33,24 +33,38 @@ class Test:
     def RunTest(self):
         return False
 
-class MissingValueTest(Test):
+class RangeTest(Test):
     def __init__ (self, testId = 1, **kwargs):
         self.id = testId
-        self.value = kwargs["value"]
+        for parameter in kwargs["Parameters"]:
+          if parameter['Name'] == 'Max':
+            self.max = parameter['Value']
+          elif parameter['Name'] == 'Min':
+            self.min = parameter['Value']
 
     # data must be a float list
     # returns a set of boolean flags 
-    def runTest (self, data):
+    def runTest (self, dataframe):
         return []
 
-class OutOfBoundsTest(Test):
+class SpatialInconsistency(Test):
     def __init__ (self, testId = 1, **kwargs):
         self.id = testId
-    def RunTest(self, data):
+        for parameter in kwargs["Parameters"]:
+          if parameter['Name'] == 'Comparision Data':
+            self.comparisonColumn = parameter['Value']
+          if parameter['Name'] == 'Difference Threshold (%)':
+            self.percentDifference = parameter['Value']
+
+    def RunTest(self, dataframe):
         pass
 
 class RepeatValueTest(Test):
     def __init__ (self, testId = 1, **kwargs):
         self.id = testId
-    def RunTest(self, data):
+        for parameter in kwargs["Parameters"]:
+          if parameter['Name'] == 'Repeating Threshold':
+            self.threshold = parameter['Value']
+          
+    def RunTest(self, dataframe):
         pass
