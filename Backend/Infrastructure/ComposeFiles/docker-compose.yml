@@ -38,6 +38,17 @@ services:
       - ../../SessionFiles/:/SessionFiles
     environment:
       PYTHONPATH: /code
+  test-consumer:
+    build:
+      context: ../../
+      dockerfile: Infrastructure/Dockerfiles/TestService
+    command: /code/Backend/Services/TestingFlagging/TestConsumer.py
+    container_name: test_consumer
+    volumes:
+      - ../../:/code/Backend
+      - ../../SessionFiles/:/SessionFiles
+    environment:
+      PYTHONPATH: /code
   input-mgr-svc:
     build:
       context: ../../
