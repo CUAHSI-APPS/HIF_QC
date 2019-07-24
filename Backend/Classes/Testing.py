@@ -22,6 +22,13 @@ import numpy as np
         {'Name': 'Percentage Test Data', 'Data Type' : 'Integer'}
       ]}
 '''
+
+def flagTests(value, standard="", test=""):
+  if value: 
+    return "True"
+  else:
+    return "False"
+
 class Test:
 
     __metaclass__ = ABCMeta
@@ -31,26 +38,29 @@ class Test:
         self.name = "Base Test Class"
         self.column = kwargs["Column"]
     @abstractmethod
-    def RunTest(self):
+    def runTest(self):
         return False
 
 class RangeTest(Test):
     def __init__ (self, testId = 1, **kwargs):
         self.id = testId
         self.column = kwargs["Column"]
+        self.max = 100
+        self.min = 10
         for parameter in kwargs["Parameters"]:
           if parameter['Name'] == 'Max':
-            self.max = parameter['Value']
+            self.max = float(parameter['Value'])
           elif parameter['Name'] == 'Min':
-            self.min = parameter['Value']
+            self.min = float(parameter['Value'])
 
     # data must be a float list
     # returns a set of boolean flags 
     def runTest (self, dataframe):
         # needs flagging
-        return np.logical_and(dataframe[self.column] < self.max, dataframe[self.column] > self.min)
+        outdf = np.logical_and(dataframe[self.column] < self.max, dataframe[self.column] > self.min)
+        return outdf.apply(lambda x: flagTests(x))
 
-class SpatialInconsistency(Test):
+class SpatialInconsistencyTest(Test):
     def __init__ (self, testId = 1, **kwargs):
         self.id = testId
         self.column = kwargs["Column"]
@@ -58,27 +68,34 @@ class SpatialInconsistency(Test):
           if parameter['Name'] == 'Comparision Data':
             self.comparisonColumn = parameter['Value']
           if parameter['Name'] == 'Difference Threshold (%)':
-            self.percentDifference = parameter['Value']
+            self.percentDifference = float(parameter['Value'])
 
-    def RunTest(self, dataframe):
-        return np.abs(dataframe[self.column] - dataframe[self.comparisonColumn]) / ((dataframe[self.column]+dataframe[self.comparisonColumn]/2.0)) * 100.0 > self.percentDifference
+    def runTest(self, dataframe):
+        outdf = np.abs(dataframe[self.column] - dataframe[self.comparisonColumn]) / ((dataframe[self.column]+dataframe[self.comparisonColumn]/2.0)) * 100.0 > self.percentDifference
+        return outdf.apply(lambda x: flagTests(x))
 
 class RepeatValueTest(Test):
     def __init__ (self, testId = 1, **kwargs):
         self.id = testId
         self.column = kwargs["Column"]
+        self.threshold = 1
         for parameter in kwargs["Parameters"]:
           if parameter['Name'] == 'Repeating Threshold':
-            self.threshold = parameter['Value']
+            self.threshold = int(parameter['Value'])
           
-    def RunTest(self, dataframe):
+    def runTest(self, dataframe):
         dfcopy = dataframe.copy()
         dfcopy['cumsum'] = (dfcopy[self.column] != dfcopy[self.column].shift(1)).cumsum()
-        groups = dfcopy.groupby('test', as_index=False).apply(lambda x: (x.shape[0], x[self.column].index[0]))
-        dfcopy['test'] = False
+        groups = dfcopy.groupby('cumsum', as_index=False).apply(lambda x: (x.shape[0], x[self.column].index[0]))
+        dfcopy[self.column+"test"] = False
         for group in groups:
-          end = group[0]
-          count = group[1]
-          if count == self.threshold:
-            dfcopy['test'][end-count:end] # hopefully it works :). Test this line of code.
-        return dfcopy['test']
+          start = group[1]
+          count = group[0]
+          dfcopy[self.column+"test"][start:start+count] = count == self.threshold   # hopefully it works :). Test this line of code.
+        #print ('testor', flush=True)
+        #print(groups, flush= True)
+        dfcopy[self.column+"test"] = dfcopy[self.column+"test"].astype(bool,False)
+        
+        #print(dfcopy[self.column+"test"].apply(lambda x: flagTests(x)), flush=True)
+        #print(dfcopy[self.column+"test"], flush=True)
+        return dfcopy[self.column+"test"].apply(lambda x: flagTests(x))
