@@ -1,10 +1,12 @@
+#!/usr/bin/env python
 import sys
 #sys.path.append("..")
 from flask import Flask, jsonify, json, request
 from flask_cors import cross_origin
 
 app = Flask(__name__)
-
+from TestProducer import *
+testProducer = TestProducer()
 # Service Functionality
 @app.route('/test/')
 @cross_origin()
@@ -30,9 +32,11 @@ def uploadConfigs(sessionId):
 	# check if request is JSON
 	if request.is_json:
 		jsonConfig = request.json
+		length = testProducer.send(json.dumps(jsonConfig))
+		return 'bark'+str(length)
 
 	# use json for building tests
-
+	
 	# with open('/SessionFiles/debug.txt', 'w') as f:
 	# 	f.write(json.dumps(jsonConfig["RS_kw_m2_Min kW/m2 Minimum"]))
 
