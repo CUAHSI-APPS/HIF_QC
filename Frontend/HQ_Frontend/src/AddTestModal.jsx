@@ -50,6 +50,10 @@ class AddTestModal extends React.Component {
     let possibleTests = [];
     let defaultTest = {};
 
+    //generate id for deletion
+    //modify with more complex id in the future
+    this.props.testJSON['ID'] = this.props.testJSON['Type'];
+
     this.props.addTest(this.props.testJSON);
     possibleTests = this.props.setPossibleNewTests();
 
@@ -89,7 +93,6 @@ class AddTestModal extends React.Component {
      }
    }
 
-   console.log(this.state.visualizedDataStreams);
 
   }
 
@@ -115,7 +118,6 @@ class AddTestModal extends React.Component {
         this.props.testJSON['Parameters'][parameter]['Value'] = e.target.value;
       }
     }
-    console.log(this.props.testJSON, parameterName, e.target.value);
   }
 
   /* Function that manages the output of the correct tags for the data type

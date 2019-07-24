@@ -12,6 +12,11 @@ class ConfigParentView extends React.Component {
   constructor(props) {
     super(props);
 
+
+    this.state = {selectedColumn: '',
+                  dataLoaded:false,
+                  continueDisabled: true};
+
     //Variable initializations
     this.clicks = 0;
     this.dataCallJSON = {
@@ -20,8 +25,9 @@ class ConfigParentView extends React.Component {
       "timeStep": 10,
       "rateOfDownsample": 3
     }
+
+    this.testMgrEndpoint = "http://localhost:8085/test/config/"
     this.dataSourceEndpoint = "http://localhost:8082/data/vis/downsampled/"
-    this.state = {selectedColumn: '', dataLoaded:false};
     this.colNames = JSON.parse(sessionStorage.getItem('dataCols'));
     this.metaData = {};
     this.testTypes = [];
@@ -37,6 +43,8 @@ class ConfigParentView extends React.Component {
     this.updateSelectedTests = this.updateSelectedTests.bind(this);
     this.addTest = this.addTest.bind(this);
     this.deleteTest = this.deleteTest.bind(this);
+    this.gotoNextPage = this.gotoNextPage.bind(this);
+    this.postTestConfigs = this.postTestConfigs.bind(this);
 
     //function calls on construct
     this.fetchTestTypes();
@@ -50,7 +58,7 @@ class ConfigParentView extends React.Component {
     this.testTypes = [
       {'Type':'Basic Outlier Test',
         'Parameters':[
-          {'Name':'Max', 'Data Type':'Float', 'Default Value': 10},
+          {'Name':'Max', 'Data Type':'Float', 'Default Value': 10, 'Required': true},
           {'Name':'Min', 'Data Type':'Float'}
         ],
         'Validation Reqs': ['"Max" > "Min"'],
@@ -94,7 +102,6 @@ class ConfigParentView extends React.Component {
       this.setState({metaData: this.metaData[colName]});
     }
 
-    console.log(this.metaData);
   }
 
   //enables propogation of selection back to this scope from
@@ -115,9 +122,6 @@ class ConfigParentView extends React.Component {
   updateDownloadedMetadata(selected, modifiedMetaData){
     this.metaData[selected] = modifiedMetaData;
   }
-
-
-
 
    getData(selectedDataStream){
 
@@ -212,65 +216,113 @@ class ConfigParentView extends React.Component {
    //callback function to be called from a deeper scope when a test is added
    addTest(newTest){
      this.allTests[this.state.selectedColumn].push(JSON.parse(JSON.stringify(newTest)));
+
      this.setState({activeTests: this.allTests[this.state.selectedColumn]});
 
       // not the greatest I know...
       if (Object.keys(this.allTests).length > 0) {
-        var nextStepButton = document.getElementById('nextTaskStep3');
-        nextStepButton.removeAttribute('disabled');
+          this.setState({continueDisabled:false})
       }
+
 
    }
 
-   //callback function to be called from a deeper scope when a function is deleted
+   //callback function to be called from a deeper scope when a test is deleted
    deleteTest(delTestID){
+     let activeTestExists = false;
+
+     //find a test by id and remove from our active tests
      for (var test in this.allTests[this.state.selectedColumn]){
        if(this.allTests[this.state.selectedColumn][test]['ID'] === delTestID){
          this.allTests[this.state.selectedColumn].splice(test,1);
        }
      }
      this.setState({activeTests: this.allTests[this.state.selectedColumn]});
+
+     //check for no active tests
+     //optimize to eliminate break
+     for(let col in this.allTests){
+       if(this.allTests[col].length > 0){
+         activeTestExists = true;
+         break;
+       }
+     }
+
+     //
+     if (!activeTestExists) {
+       this.setState({continueDisabled:true})
+     }
+
+   }
+
+   postTestConfigs(){
+     let endpoint = this.testMgrEndpoint + sessionStorage.getItem('sessionId');
+
+     console.log(endpoint, JSON.stringify(this.allTests));
+
+     fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.allTests)
+      })
+
+
+   }
+
+   //handle going to the next screen
+   gotoNextPage(){
+     this.postTestConfigs();
+     window.NextProgressBar(4);
+     /*PreviousProgressBar(2);*/
    }
 
   render() {
 
     return (
-      <div className="card">
-        <div className="row">
-            <div className="col-sm-3">
-              <ConfigColumnList dataColumns={this.colNames} updateSelCol={this.updateSelectedColumn}/>
-              <div>Current Selection: {this.state['selectedColumn']}</div>
-            </div>
-            <div className="col-sm-3">
-              <ConfigMetadataView
+      <>
+        <div className="card">
+          <div className="row">
+              <div className="col-sm-3">
+                <ConfigColumnList dataColumns={this.colNames} updateSelCol={this.updateSelectedColumn}/>
+                <div>Current Selection: {this.state['selectedColumn']}</div>
+              </div>
+              <div className="col-sm-3">
+                <ConfigMetadataView
+                  selectedCol={this.state['selectedColumn']}
+                  metaData={this.state.metaData}
+                  updateDownloadedMetadata={this.updateDownloadedMetadata}/>
+              </div>
+              <div className="col-sm-6">
+                <ConfigTestViews
                 selectedCol={this.state['selectedColumn']}
                 metaData={this.state.metaData}
-                updateDownloadedMetadata={this.updateDownloadedMetadata}/>
-            </div>
-            <div className="col-sm-6">
-              <ConfigTestViews
-              selectedCol={this.state['selectedColumn']}
-              metaData={this.state.metaData}
-              testTypes={this.testTypes}
-              retrievedData={this.state.retrievedData}
-              clearData={this.clearData}
-              addData={this.addData}
-              dataLoaded={this.state.dataLoaded}
-              activeTests={this.state.activeTests}
-              addTest={this.addTest}
-              deleteTest={this.deleteTest}/>
-            </div>
-        </div>
-    </div>
+                testTypes={this.testTypes}
+                retrievedData={this.state.retrievedData}
+                clearData={this.clearData}
+                addData={this.addData}
+                dataLoaded={this.state.dataLoaded}
+                activeTests={this.state.activeTests}
+                addTest={this.addTest}
+                deleteTest={this.deleteTest}/>
+              </div>
+          </div>
+      </div>
+      <div className="row p-3 text-center">
+          <div className="col-sm">
+              <button className="btn btn-secondary" onClick={() => {}}> Previous </button>
+          </div>
+          <div className="col-sm">
+              <button className="btn btn-success" disabled={this.state.continueDisabled} id="nextTaskStep3" onClick={this.gotoNextPage}> Continue > </button>
+          </div>
+      </div>
+    </>
     );
   }
 }
 
-
-window.loadReactApp = function(){
-  let domContainer = document.querySelector('#config-parent-view');
-  ReactDOM.render(<ConfigParentView />, domContainer);
-};
 
 
 export default ConfigParentView;
