@@ -5,7 +5,10 @@ from flask import Flask, jsonify, json, request
 from flask_cors import cross_origin
 
 app = Flask(__name__)
+from redis import Redis
 from TestProducer import *
+
+redis = Redis(host='redis', port=6379)
 testProducer = TestProducer()
 # Service Functionality
 @app.route('/test/')
@@ -32,8 +35,8 @@ def uploadConfigs(sessionId):
 	# check if request is JSON
 	if request.is_json:
 		jsonConfig = request.json
-		length = testProducer.send(json.dumps(jsonConfig))
-		return 'bark'+str(length)
+		jsonConfig['sessionId'] = sessionId
+		testProducer.send(json.dumps(jsonConfig))
 
 	# use json for building tests
 	
@@ -42,6 +45,13 @@ def uploadConfigs(sessionId):
 
 	return(jsonConfig)
 
+@app.route('/test/result/<sessionId>')
+@cross_origin()
+def getResult(sessionId):
+	result = redis.get(sessionId+'outputcsv')
+	if result != None:
+		return result
+	return 'None'
 
 # Run Main
 if __name__ == '__main__':

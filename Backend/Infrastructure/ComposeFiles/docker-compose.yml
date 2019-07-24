@@ -42,7 +42,7 @@ services:
     build:
       context: ../../
       dockerfile: Infrastructure/Dockerfiles/TestService
-    command: /code/Backend/Services/TestingFlagging/TestConsumer.py
+    command: python /code/Backend/Services/TestingFlagging/TestConsumer.py
     container_name: test_consumer
     volumes:
       - ../../:/code/Backend
