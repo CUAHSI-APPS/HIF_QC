@@ -10,6 +10,7 @@ class ConfigTestViews extends React.Component {
 
     this.state = {addTestModal: false,
                   modTestModal: false,
+                  selectedTest: null,
                   possibleTests: this.props.testTypes};
 
     this.tempTestJSON = {};
@@ -22,6 +23,9 @@ class ConfigTestViews extends React.Component {
     this.getFirstDefaultTest = this.getFirstDefaultTest.bind(this);
     this.showActiveTests = this.showActiveTests.bind(this);
     this.setPossibleNewTests = this.setPossibleNewTests.bind(this);
+    this.testSelected = this.testSelected.bind(this);
+    this.disableModRmv = this.disableModRmv.bind(this);
+    this.handleRmvTest = this.handleRmvTest.bind(this);
 
   }
 
@@ -33,8 +37,6 @@ class ConfigTestViews extends React.Component {
   setPossibleNewTests(){
     let possibleTests = [];
     let at = this.props.activeTests;
-
-
 
     //filter already configured tests
     possibleTests = this.props.testTypes.filter((testType) => {
@@ -58,7 +60,6 @@ class ConfigTestViews extends React.Component {
     this.setState({possibleTests:possibleTests});
 
     return possibleTests;
-
   }
 
   handleAddTest(){
@@ -80,6 +81,11 @@ class ConfigTestViews extends React.Component {
     this.setState({modTestModal:true});
   }
 
+  handleRmvTest(){
+    //fetch id using this.state.selectedTest and delete
+    this.props.deleteTest(this.state.selectedTestId)
+  }
+
   handleModalClose(isAddValid){
     this.props.clearData();
 
@@ -96,11 +102,31 @@ class ConfigTestViews extends React.Component {
     })
   }
 
+  testSelected(e){
+    this.setState({selectedTest:e.target.value});
+    this.setState({selectedTestId:e.target.getAttribute('test-id')})
+  }
+
+  disableModRmv(){
+
+    if(!isDefined(this.props.activeTests)){
+      return true;
+    }
+    else if(this.props.activeTests.length == 0) {
+      return true;
+    } else if(this.state.selectedTest === null){
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
   showActiveTests(){
     if(isDefined(this.props.activeTests)){
       return( this.props.activeTests.map( (test) => {
         return(
-          <option>{test['Type']}</option>
+          <option test-id={test['ID']} onClick={this.testSelected}>{test['Type']}</option>
         );
       }));
     } else {
@@ -120,8 +146,8 @@ class ConfigTestViews extends React.Component {
             </select>
             <div className="button-group text-center pt-3">
                 <button disabled={!this.props.dataLoaded} id="btnAddTest" className="btn btn-secondary" onClick={this.handleAddTest}>Add Test</button>
-                <button disabled={!this.props.dataLoaded && this.props.activeTests && this.props.activeTests.length == 0} id="btnModTest" className="btn btn-secondary" onClick={this.handleModTest}>Modify Test</button>
-                <button disabled={!this.props.dataLoaded && this.props.activeTests && this.props.activeTests.length == 0} id="btnRmvTest" className="btn btn-secondary" onClick={this.emptyFun}>Remove Test</button>
+                <button disabled={this.disableModRmv()} id="btnModTest" className="btn btn-secondary" onClick={this.handleModTest}>Modify Test</button>
+                <button disabled={this.disableModRmv()} id="btnRmvTest" className="btn btn-secondary" onClick={this.handleRmvTest}>Remove Test</button>
             </div>
         </div>
         <AddTestModal

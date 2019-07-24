@@ -3,7 +3,7 @@
 }
 
 //This will move the progress bar forward
-function NextProgressBar(NextStep) {
+window.NextProgressBar = function(NextStep) {
     //If there are no more li to set to active then skip this
     if ($("#Progress-Bar").children().not(".active").length !== 0) {
         //set the next li item as the active one
@@ -23,8 +23,13 @@ function NextProgressBar(NextStep) {
 
         $('#StepPlaceholder').load("/view/SetStep/Step_" + NextStep, function(){
           if(NextStep === 3){
-            loadReactApp();
+            loadTestConfigComponents();
           }
+
+          if(NextStep === 4){
+
+          }
+
         });
     }
 }
@@ -47,5 +52,9 @@ function PreviousProgressBar(PreviousStep) {
         currentTask.removeClass("active");
     }
 
-    $('#StepPlaceholder').load("/view/SetStep/Step_" + PreviousStep);
+    $('#StepPlaceholder').load("/view/SetStep/Step_" + PreviousStep, function(){
+      if(PreviousStep === 3){
+        loadTestConfigComponents();
+      }
+    });
 }

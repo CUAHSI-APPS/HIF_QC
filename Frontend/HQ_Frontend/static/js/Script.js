@@ -3,7 +3,6 @@ var upper = 0;
 
 
 
-
 function manageSuccessfulUpload(file, response){
   sessionStorage.setItem('sessionId', response['token']);
   dropPreview();
