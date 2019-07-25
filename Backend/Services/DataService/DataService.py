@@ -66,13 +66,13 @@ def get_data():
 '''
 	Endpoint: get_stats
 	Description: Returns stats for specified columns in uploaded json
-	Requirement: The upload must have a mime type of application/json 
+	Requirement: The upload must have a mime type of application/json
 	Example call: /stats/fa3cf742-7c1d-11e9-be79-0242ac1b0005
 	Arguments: sessionId - uuid, a json file with column names
 	Example JSON:
 	{'Columns': ['cola','colb','colc']}
-	To test with curl: curl -d '{"key1":1}' -X POST 
-	http://localts/63f7d7dc-8e08-11e9-a87f-0242ac140006 
+	To test with curl: curl -d '{"key1":1}' -X POST
+	http://localts/63f7d7dc-8e08-11e9-a87f-0242ac140006
 	-H "Content-Type: application/json"
 '''
 @app.route('/stats/<sessionId>', methods=['Post'])
@@ -113,6 +113,9 @@ def get_downsampled_data(sessionId):
 	data = dataManager.retrieveOnlyDataCols(filePath, requestContent['dataColList'], indexName=requestContent['indexCol'])
 	data = dataManager.downSample(data, requestContent['timeStep'], requestContent['rateOfDownsample'])
 
+	# store index for later user
+	dataManager.setNdxName(sessionId, requestContent['indexCol'])
+
 	return data.to_json()
 
 
@@ -149,6 +152,9 @@ def get_downsampled_data_vis(sessionId):
 
 	with open('/SessionFiles/debug.txt', 'w') as f:
 		f.write(json.dumps(visData))
+
+	# store index for later user
+	dataManager.setNdxName(sessionId, requestContent['indexCol'])
 
 	return jsonify(visData)
 

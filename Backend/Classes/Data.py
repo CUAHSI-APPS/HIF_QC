@@ -21,6 +21,47 @@ class DataManager():
     def retrieveFileLoc(self, sessionId):
         return self.redis.get(sessionId)
 
+    def setNdxName(self, sessionId, colName):
+        self.redis.set(sessionId+"index", colName)
+
+    def getNdxName(self, sessionId):
+        self.redis.get(sessionId+"index").decode('utf-8')
+
+    def setTimeColAsNdx(self, sessionId, DataFrame):
+        indexCol = self.redis.get(sessionId+"index").decode('utf-8')
+        locDF = DataFrame
+
+        # set datetime as the index of our flags
+        if indexCol is not None:
+            locDF[indexCol] = pd.to_datetime(locDF[indexCol])
+            locDF = locDF.set_index(indexCol)
+
+        return locDF
+
+    def getDataAsDf(self, sessionId):
+        filePath = self.retrieveFileLoc(sessionId)
+        df = None
+
+        with open(filePath, 'r') as file:
+            df = pd.read_csv(file)
+            df.apply(pd.to_numeric, errors='coerce').fillna(df)
+
+        df = self.setTimeColAsNdx(sessionId, df)
+
+        return df
+
+    def getOutputAsDf(self, sessionId, filePath):
+        filePath = filePath
+        df = None
+
+        with open(filePath, 'r') as file:
+            df = pd.read_csv(file)
+            df.apply(pd.to_numeric, errors='coerce').fillna(df)
+
+        df = self.setTimeColAsNdx(sessionId, df)
+
+        return df
+
     def getCols(self, filePath):
         col = []
         df = None
@@ -76,7 +117,9 @@ class DataManager():
 
             subframe = df[dataColList]
 
+
         return subframe
+
 
     def downSample(self, df, timeStep, numberOfBins):
 

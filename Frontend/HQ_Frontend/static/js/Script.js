@@ -147,24 +147,48 @@ function RemoveTest() {
     }
 }
 
-function RunTest() {
-    $('#headerTest').text("Test Running...");
-    var $progress = $("#progressTest");
+function queryStatus() {
+    let endpoint = "http://localhost:8085/test/result/"
+    endpoint = endpoint + sessionStorage.getItem("sessionId");
+
     setTimeout(function () {
-        $progress.addClass("w-25");
-        $progress.attr("aria-valuenow", "25");
-        setTimeout(function () {
-            $progress.addClass("w-50");
-            $progress.attr("aria-valuenow", "50");
-            setTimeout(function () {
-                $progress.addClass("w-75");
-                $progress.attr("aria-valuenow", "75");
-                setTimeout(function () {
-                    NextProgressBar(5);
-                }, 1000);
-            }, 1000);
-        }, 1000);
+      fetch(endpoint)
+      .then((response) => response.json())
+      .then(function(data){
+        if(data == 'None'){
+          queryStatus();
+        }
+        else{
+          window.csv = data['csv'];
+          $('#headerTest').text("Test Complete!");
+          $('#csv-btn').prop('disabled', false);
+          console.log(window.csv);
+        }
+      })
     }, 1000);
+
+}
+
+function downloadCSV(){
+  var encodedUri = 'data:text/csv;charset=utf-8,' + encodeURI(window.csv);
+  var link = document.createElement("a");
+    link.target = '_blank';
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "flags.csv");
+    document.body.appendChild(link); // Required for FF
+
+  link.click(); // This will download the data file named "my_data.csv".
+}
+
+function RunTest() {
+    let endpoint = "http://localhost:8085/test/run/"
+    endpoint = endpoint + sessionStorage.getItem("sessionId");
+
+    fetch(endpoint)
+    .then((response) => {
+        $('#headerTest').text("Test Running...");
+        queryStatus();
+      })
 }
 
 function SetReviewMeta() {
