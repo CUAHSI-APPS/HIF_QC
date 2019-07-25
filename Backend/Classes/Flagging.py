@@ -8,10 +8,11 @@ class Flag:
 
         return flagCodes;
 
-    def flag(self, test, passed=True):
-        if (passed == True):
-            return self.flagCodes['None']
-        else:
+    def returnGoodFlag(self):
+        return self.flagCodes['None']
+
+    def flag(self, failed, test):
+        if(not failed):
             try:
                 return self.flagCodes[test]
             except KeyError:
@@ -19,3 +20,5 @@ class Flag:
     Test name not defined in flag codes.
     Please check your spelling on test names and/or verify that the flag code was defined in the configuration file.''')
                 return(None)
+        else:
+            return self.flagCodes['None']

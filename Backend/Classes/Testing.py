@@ -1,5 +1,7 @@
 from abc import ABCMeta, abstractmethod
+from Backend.Classes.Flagging import Flag
 import numpy as np
+
 '''
       {'Type':'Basic Outlier Test',
         'Parameters':[
@@ -24,7 +26,7 @@ import numpy as np
 '''
 
 def flagTests(value, standard="", test=""):
-  if value: 
+  if value:
     return "True"
   else:
     return "False"
@@ -37,16 +39,20 @@ class Test:
         self.id = testId
         self.name = "Base Test Class"
         self.column = kwargs["Column"]
+        self.flag = Flag()
     @abstractmethod
     def runTest(self):
         return False
 
 class RangeTest(Test):
     def __init__ (self, testId = 1, **kwargs):
+        self.flag = Flag()
         self.id = testId
         self.column = kwargs["Column"]
+        self.testName = kwargs["Type"]
         self.max = 100
         self.min = 10
+
         for parameter in kwargs["Parameters"]:
           if parameter['Name'] == 'Max':
             self.max = float(parameter['Value'])
@@ -54,16 +60,19 @@ class RangeTest(Test):
             self.min = float(parameter['Value'])
 
     # data must be a float list
-    # returns a set of boolean flags 
+    # returns a set of boolean flags
     def runTest (self, dataframe):
         # needs flagging
         outdf = np.logical_and(dataframe[self.column] < self.max, dataframe[self.column] > self.min)
-        return outdf.apply(lambda x: flagTests(x))
+        return outdf.apply(lambda x: self.flag.flag(x, self.testName))
 
 class SpatialInconsistencyTest(Test):
     def __init__ (self, testId = 1, **kwargs):
+        self.flag = Flag()
+        self.testName = kwargs["Type"]
         self.id = testId
         self.column = kwargs["Column"]
+
         for parameter in kwargs["Parameters"]:
           if parameter['Name'] == 'Comparision Data':
             self.comparisonColumn = parameter['Value']
@@ -71,31 +80,32 @@ class SpatialInconsistencyTest(Test):
             self.percentDifference = float(parameter['Value'])
 
     def runTest(self, dataframe):
-        outdf = np.abs(dataframe[self.column] - dataframe[self.comparisonColumn]) / ((dataframe[self.column]+dataframe[self.comparisonColumn]/2.0)) * 100.0 > self.percentDifference
-        return outdf.apply(lambda x: flagTests(x))
+        outdf = np.abs(dataframe[self.column] - dataframe[self.comparisonColumn]) / ((dataframe[self.column]+dataframe[self.comparisonColumn]/2.0)) * 100.0 < self.percentDifference
+        outdf.name = self.column
+
+        return outdf.apply(lambda x: self.flag.flag(x, self.testName))
 
 class RepeatValueTest(Test):
     def __init__ (self, testId = 1, **kwargs):
+        self.flag = Flag()
         self.id = testId
         self.column = kwargs["Column"]
+        self.testName = kwargs["Type"]
         self.threshold = 1
+
         for parameter in kwargs["Parameters"]:
           if parameter['Name'] == 'Repeating Threshold':
             self.threshold = int(parameter['Value'])
-          
+
     def runTest(self, dataframe):
         dfcopy = dataframe.copy()
         dfcopy['cumsum'] = (dfcopy[self.column] != dfcopy[self.column].shift(1)).cumsum()
         groups = dfcopy.groupby('cumsum', as_index=False).apply(lambda x: (x.shape[0], x[self.column].index[0]))
-        dfcopy[self.column+"test"] = False
+        dfcopy[self.column ] = False
         for group in groups:
           start = group[1]
           count = group[0]
-          dfcopy[self.column+"test"][start:start+count] = count == self.threshold   # hopefully it works :). Test this line of code.
-        #print ('testor', flush=True)
-        #print(groups, flush= True)
-        dfcopy[self.column+"test"] = dfcopy[self.column+"test"].astype(bool,False)
-        
-        #print(dfcopy[self.column+"test"].apply(lambda x: flagTests(x)), flush=True)
-        #print(dfcopy[self.column+"test"], flush=True)
-        return dfcopy[self.column+"test"].apply(lambda x: flagTests(x))
+          dfcopy[self.column ][start:start+count] = count is not self.threshold   # hopefully it works :). Test this line of code.
+
+        dfcopy[self.column ] = dfcopy[self.column ].astype(bool,False)
+        return dfcopy[self.column ].apply(lambda x: self.flag.flag(x, self.testName))

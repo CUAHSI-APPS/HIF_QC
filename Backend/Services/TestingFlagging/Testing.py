@@ -3,6 +3,8 @@ import sys
 #sys.path.append("..")
 from flask import Flask, jsonify, json, request
 from flask_cors import cross_origin
+import pandas as pd
+from Backend.Classes.Data import DataManager
 
 app = Flask(__name__)
 from redis import Redis
@@ -10,6 +12,8 @@ from TestProducer import *
 
 redis = Redis(host='redis', port=6379)
 testProducer = TestProducer()
+dataManager = DataManager(redis)
+
 # Service Functionality
 @app.route('/test/')
 @cross_origin()
@@ -26,6 +30,8 @@ def index():
 		return False, str(e)
 
 
+
+
 @app.route('/test/config/<sessionId>', methods=["POST"])
 @cross_origin()
 def uploadConfigs(sessionId):
@@ -36,21 +42,45 @@ def uploadConfigs(sessionId):
 	if request.is_json:
 		jsonConfig = request.json
 		jsonConfig['sessionId'] = sessionId
-		testProducer.send(json.dumps(jsonConfig))
+		redis.set(sessionId+"testConfig", json.dumps(jsonConfig))
 
 	# use json for building tests
-	
+
 	# with open('/SessionFiles/debug.txt', 'w') as f:
 	# 	f.write(json.dumps(jsonConfig["RS_kw_m2_Min kW/m2 Minimum"]))
 
-	return(jsonConfig)
+	return("Configurations stored successfully.")
+
+@app.route('/test/run/<sessionId>', methods=["GET"])
+@cross_origin()
+def triggerRunTest(sessionId):
+	jsonConfig = redis.get(sessionId+"testConfig")
+	testProducer.send(jsonConfig)
+
+	return("Testing Started")
+
 
 @app.route('/test/result/<sessionId>')
 @cross_origin()
 def getResult(sessionId):
-	result = redis.get(sessionId+'outputcsv')
-	if result != None:
-		return result
+	fp = redis.get(sessionId+'outputcsv').decode('utf-8')
+
+	if fp != None:
+		result = dataManager.getOutputAsDf(sessionId, fp)
+		indexCol = dataManager.getNdxName(sessionId)
+
+		df = dataManager.getDataAsDf(sessionId)
+		df.rename(columns=lambda x: x if x == indexCol else x+"_flags", inplace=True)
+
+		for col in df.columns:
+			if col is not indexCol:
+				df[col] = df[col].map(lambda x: '-')
+
+		for col in result.columns:
+			df[col] = result[col]
+
+		return json.dumps({'csv':df.to_csv()})
+
 	return 'None'
 
 # Run Main

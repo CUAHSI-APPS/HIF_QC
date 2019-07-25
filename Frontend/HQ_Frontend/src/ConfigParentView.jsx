@@ -258,7 +258,12 @@ class ConfigParentView extends React.Component {
    postTestConfigs(){
      let endpoint = this.testMgrEndpoint + sessionStorage.getItem('sessionId');
 
-     console.log(endpoint, JSON.stringify(this.allTests));
+     //add time index to our service
+     this.allTests['timeIndex'] = sessionStorage.getItem('indexCol');
+
+
+
+     console.log(this.allTests);
 
      fetch(endpoint, {
         method: 'POST',
