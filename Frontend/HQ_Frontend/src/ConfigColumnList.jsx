@@ -1,5 +1,7 @@
 'use strict';
 
+import './ConfigColumnList.css';
+
 class ConfigColumnList extends React.Component {
   constructor(props) {
     super(props);
@@ -24,9 +26,13 @@ class ConfigColumnList extends React.Component {
     return (
       <div className="card-body">
           <h6>Data Fields</h6>
-          <select multiple className="form-control selectBox" onChange={this.handleSelection}>
-            {dataColsList}
-          </select>
+          <form>
+            <div className="form-group">
+              <select multiple className="form-control selectBox col-list" onChange={this.handleSelection}>
+                {dataColsList}
+              </select>
+            </div>
+          </form>
       </div>
     );
   }

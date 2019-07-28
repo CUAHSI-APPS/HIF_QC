@@ -54,6 +54,9 @@ class AddTestModal extends React.Component {
     //modify with more complex id in the future
     this.props.testJSON['ID'] = this.props.testJSON['Type'];
 
+    // run validation for spatial inconsistency
+    //or something :/
+
     this.props.addTest(this.props.testJSON);
     possibleTests = this.props.setPossibleNewTests();
 
@@ -128,18 +131,24 @@ class AddTestModal extends React.Component {
 
    switch(parameter['Data Type']){
       case 'TimeSeries':
+        let first = true;
         //get other columns as options
         otherColumns = this.colNames.map((dataStream) => {
           if(dataStream !== this.props.selectedDS){
-               return <option>{dataStream}</option>
+               if(first){
+                 return <option key={uuidv4()} selected="selected" >{dataStream}</option>
+                 first = false;
+               } else{
+                 return <option key={uuidv4()}>{dataStream}</option>
+               }
            }
         });
 
-        return(<select parameter-name={parameter['Name']} onChange={this.handleValueInput}>{otherColumns}</select>)
+        return(<select key={uuidv4()} className="form-control" parameter-name={parameter['Name']} value={this.state.value} onChange={this.handleValueInput}>{otherColumns}</select>)
         break;
 
       default:
-        return(<input parameter-name={parameter['Name']} onChange={this.handleValueInput}/>)
+        return(<input key={uuidv4()} className="form-control" parameter-name={parameter['Name']} placeholder="0.0" onChange={this.handleValueInput}/>)
         break;
    }
 
@@ -152,12 +161,12 @@ class AddTestModal extends React.Component {
 
     //pass test info down as subset of possible testTypes
     testOptions = this.props.testInfo.map((test) => {
-      return(<option>{test['Type']}</option>);
+      return(<option key={uuidv4()}>{test['Type']}</option>);
     });
 
      dataStreamOptions = this.colNames.map((dataStream) => {
        if(dataStream !== this.props.selectedDS){
-            return <option>{dataStream}</option>
+            return <option key={uuidv4()}>{dataStream}</option>
         }
      });
 
@@ -172,10 +181,10 @@ class AddTestModal extends React.Component {
               test['Parameters'].map((parameter) => {
                   inputTagGroup = this.handleRenderDifferentParamInputs(parameter);
                   return(
-                    <li><div className="row">
-                      <div className="col-sm-5">{parameter['Name']}:</div>
-                      <div className="col-sm-7">{inputTagGroup}</div>
-                    </div></li>
+                  <>
+                    <label key={uuidv4()}>{parameter['Name']}:</label>
+                    {inputTagGroup}
+                  </>
                   )
               })
             )
@@ -204,16 +213,18 @@ class AddTestModal extends React.Component {
                                  />
                 </div>
                 <div className="col-sm-4">
-                  <select style={{minWidth :'100%'}} onChange={this.handleTestSelection}>
-                    {testOptions}
-                   </select>
-                   <div>
-                     <ul>
+                  <form>
+                    <div className="form-group">
+                       <select className="form-control" style={{minWidth :'100%'}} onChange={this.handleTestSelection}>
+                        {testOptions}
+                       </select>
+                     </div>
+                     <div className="form-group">
                       {testConfigurations}
-                     </ul>
-                   </div>
-                 </div>
+                     </div>
+                  </form>
                </div>
+              </div>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={this.openSubMenu}>

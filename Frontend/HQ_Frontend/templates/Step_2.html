@@ -1,14 +1,14 @@
 ﻿    <!-- The upload table -->
 <div class="card-body" >
     <h4>Uploaded Data File (<span id="rowCount">100</span> rows)</h4>
-    <div id="tablePlaceholder" style="max-height:325px; overflow-y:scroll"></div>
+    <div id="tablePlaceholder"></div>
 </div>
 
 <div class="row">
-    <div class="col-sm-9">
+    <div class="col-sm-12">
         <div class="card">
             <div class="row p-3">
-                <div class="col-sm-5">
+                <div class="col-sm-3">
                     <div class="card bg-light" id="SelectPlaceholder">
                     </div>
                 </div>
@@ -22,7 +22,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-5">
+                <div class="col-sm-3">
                     <div class="card bg-light">
                         <div class="card-body">
                             <h6>Data Columns</h6>
@@ -30,18 +30,20 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-sm-4">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h6>Select Date Time Column</h6>
+                            <select id="dateTimeBox1" class="form-control selectBox" multiple onchange="Step3();">
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
-    <div class="col-sm-3">
-        <div class="card bg-light">
-            <div class="card-body">
-                <h6>Select Date Time Column</h6>
-                <select id="dateTimeBox1" class="form-control selectBox" multiple onchange="Step3();">
-                </select>
-            </div>
-        </div>
-    </div>
+
 </div>
 
 <script>

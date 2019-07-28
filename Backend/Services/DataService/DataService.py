@@ -76,7 +76,13 @@ def get_data():
 	-H "Content-Type: application/json"
 '''
 @app.route('/stats/<sessionId>', methods=['Post'])
+@cross_origin()
 def get_stats(sessionId):
+
+	# with open('/SessionFiles/debug_stats.txt', 'w') as f:
+	# 	f.write(json.dumps(stats))
+	# 	f.write(json.dumps(request.json))
+
 	print (request.form)
 	dataColumns = ''
 	statColumnList = ''
@@ -93,7 +99,12 @@ def get_stats(sessionId):
 		#stats = []
 		#for col in data:
 		#	stats.append(getBasicStatistics(col))
-	return jsonify(stats), 200 #jsonify(stats)
+
+	print(stats)
+
+
+
+	return jsonify(stats) #jsonify(stats)
 
 '''
 	Endpont: get_downsampled_data

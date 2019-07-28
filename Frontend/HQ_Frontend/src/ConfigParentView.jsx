@@ -26,6 +26,13 @@ class ConfigParentView extends React.Component {
       "rateOfDownsample": 3
     }
 
+    this.mdSchema = {
+      'Units': '',
+      'Data Type': '',
+      'General Category': '',
+      'Time Interval': ''
+    }
+
     this.testMgrEndpoint = "http://localhost:8085/test/config/"
     this.dataSourceEndpoint = "http://localhost:8082/data/vis/downsampled/"
     this.colNames = JSON.parse(sessionStorage.getItem('dataCols'));
@@ -45,9 +52,11 @@ class ConfigParentView extends React.Component {
     this.deleteTest = this.deleteTest.bind(this);
     this.gotoNextPage = this.gotoNextPage.bind(this);
     this.postTestConfigs = this.postTestConfigs.bind(this);
+    this.pullMetadata = this.pullMetadata.bind(this);
 
     //function calls on construct
     this.fetchTestTypes();
+    this.pullMetadata();
 
   }
 
@@ -79,29 +88,36 @@ class ConfigParentView extends React.Component {
     ];
   }
 
+  //pulls computed metadata from statistics service
+  pullMetadata(){
+    //pull down all statistics
+    let endpoint = "http://localhost:8082/stats/";
+    let metaDataRequestJson = {'Columns': this.colNames};
+
+    endpoint = endpoint + sessionStorage.getItem('sessionId');
+
+    fetch(endpoint, {
+       method: 'POST',
+       headers: {
+         'Accept': 'application/json',
+         'Content-Type': 'application/json',
+       },
+       body: JSON.stringify(metaDataRequestJson)
+     })
+     .then((resp) => { return resp.json(); })
+     .then((md) => {
+       for(var col in this.colNames){
+         md[this.colNames[col]] = Object.assign(md[this.colNames[col]], this.mdSchema);
+
+         //chse you wiley rascal you!
+         delete md[this.colNames[col]]['Easter Egg'];
+       }
+       this.metaData = md;
+     })
+  }
 
   fetchMetadata(colName){
-
-    if(typeof this.metaData[colName] === 'undefined'){
-      var sampleMetadata = {
-        'Mean': 25,
-        'Standard Deviation': 9.3,
-        'Greatest Value': 112,
-        'Lowest Value': -83,
-        'Units': '',
-        'Data Type': '',
-        'General Category': '',
-        'Time Interval': ''
-      }
-
-      this.clicks += 1;
-      sampleMetadata['Mean'] += this.clicks;
-      this.setState({metaData: sampleMetadata});
-      this.metaData[colName] = sampleMetadata;
-    } else {
-      this.setState({metaData: this.metaData[colName]});
-    }
-
+    this.setState({metaData: this.metaData[colName]});
   }
 
   //enables propogation of selection back to this scope from
@@ -292,15 +308,14 @@ class ConfigParentView extends React.Component {
           <div className="row">
               <div className="col-sm-3">
                 <ConfigColumnList dataColumns={this.colNames} updateSelCol={this.updateSelectedColumn}/>
-                <div>Current Selection: {this.state['selectedColumn']}</div>
               </div>
-              <div className="col-sm-3">
+              <div className="col-sm-5">
                 <ConfigMetadataView
                   selectedCol={this.state['selectedColumn']}
                   metaData={this.state.metaData}
                   updateDownloadedMetadata={this.updateDownloadedMetadata}/>
               </div>
-              <div className="col-sm-6">
+              <div className="col-sm-4">
                 <ConfigTestViews
                 selectedCol={this.state['selectedColumn']}
                 metaData={this.state.metaData}

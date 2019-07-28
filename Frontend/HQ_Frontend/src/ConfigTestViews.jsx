@@ -1,5 +1,5 @@
 import AddTestModal from './AddTestModal.jsx';
-
+import './ConfigTestViews.css'
 
 
 'use strict';
@@ -141,13 +141,13 @@ class ConfigTestViews extends React.Component {
       <>
         <div className="card-body">
             <h6>QC Test</h6>
-            <select id="selectTest" multiple className="form-control selectBox">
+            <select id="selectTest" multiple className="form-control selectBox test-list">
               {activeTests}
             </select>
             <div className="button-group text-center pt-3">
-                <button disabled={!this.props.dataLoaded} id="btnAddTest" className="btn btn-secondary" onClick={this.handleAddTest}>Add Test</button>
-                <button disabled={this.disableModRmv()} id="btnModTest" className="btn btn-secondary" onClick={this.handleModTest}>Modify Test</button>
-                <button disabled={this.disableModRmv()} id="btnRmvTest" className="btn btn-secondary" onClick={this.handleRmvTest}>Remove Test</button>
+                <button disabled={!this.props.dataLoaded} id="btnAddTest" className="btn btn-secondary mx-1" onClick={this.handleAddTest}>Add Test</button>
+                <button disabled={this.disableModRmv()} id="btnModTest" className="btn btn-secondary mx-1" onClick={this.handleModTest}>Modify Test</button>
+                <button disabled={this.disableModRmv()} id="btnRmvTest" className="btn btn-secondary mx-1" onClick={this.handleRmvTest}>Remove Test</button>
             </div>
         </div>
         <AddTestModal
