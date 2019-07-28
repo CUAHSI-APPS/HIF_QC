@@ -3,6 +3,8 @@
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 
+import './ConfigMetadataView.css';
+
 
 class ConfigMetadataView extends React.Component {
 
@@ -59,11 +61,14 @@ class ConfigMetadataView extends React.Component {
 
     if( isDefined(this.props.metaData) ){
       md = Object.keys(this.props.metaData).map( (key, index) => (
-        <li key={'li'+key}>{key} : <span key={key}> {this.props.metaData[key]} </span> </li>
+        <li className="list-group-item" key={'li'+key}>{key} : <span key={key}> {this.props.metaData[key]} </span> </li>
       ))
 
       mdedit = Object.keys(this.props.metaData).map( (key, index) => (
-        <li key={'mli'+key}>{key} : <input type='text' key={key} field={key} defaultValue={this.props.metaData[key]} onChange={this.manageInput} /> </li>
+        <>
+          <label key={'mli'+key}>{key}</label>
+          <input className="form-control" type='text' key={key} field={key} defaultValue={this.props.metaData[key]} onChange={this.manageInput} />
+        </>
       ))
     }
     else{
@@ -78,10 +83,10 @@ class ConfigMetadataView extends React.Component {
         <div className="card-body">
             <h6>Data Field Metadata</h6>
             <div className="md-display">
-            <ul>
-              <li>Name: <span>{this.props.selectedCol}</span></li>
-              {md}
-            </ul>
+              <ul className="list-group">
+                <li className="list-group-item" >Name: <span>{this.props.selectedCol}</span></li>
+                {md}
+              </ul>
             </div>
             <div className="text-center pt-3">
                 <button id="btnMeta" onClick={this.handleShow} className="btn btn-secondary">Modify Metadata</button>
@@ -93,10 +98,12 @@ class ConfigMetadataView extends React.Component {
               <Modal.Title>Modify Metadata</Modal.Title>
             </Modal.Header>
             <Modal.Body>
-            <ul>
-              <li>Name: <span>{this.props.selectedCol}</span></li>
-              {mdedit}
-            </ul>
+            <form>
+              <div className="form-group">
+                <div> Column Name:<h5> <span> {this.props.selectedCol} </span> </h5> </div>
+                {mdedit}
+              </div>
+            </form>
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={this.handleClose}>

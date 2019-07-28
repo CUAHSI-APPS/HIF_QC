@@ -6,12 +6,12 @@ ul,li{
 
 #tablePlaceholder{
   max-width: 90vw;
-  overflow-x:scroll;
-  max-height:325px;
-  overflow-y:scroll;
+  max-height:20vh;
+  overflow-x: scroll;
+  overflow-y: scroll;
 }
 
 .table-responsive{
   max-width: 82vw;
-  overflow-x: scroll;
+  overflow-x: unset;
 }

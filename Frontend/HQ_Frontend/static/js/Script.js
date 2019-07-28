@@ -22,13 +22,13 @@ function getPreviewDataUrl(numRows){
 function dropPreview() {
     var url = ''
   // Unhide table
-    $("#UploadFileTable").removeAttr("hidden");
+  //  $("#UploadFileTable").removeAttr("hidden");
     $("#nextTaskStep1").prop("disabled", false);
 
     // Format url for retrieval of information
     url = getPreviewDataUrl(2);
 
-    $("#UploadFileTable").load(url);
+    //$("#UploadFileTable").load(url);
     $("#loadingModal").modal("hide");
 }
 
