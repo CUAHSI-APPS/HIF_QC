@@ -15,8 +15,7 @@ class ConfigParentView extends React.Component {
 
     this.state = {selectedColumn: '',
                   dataLoaded:false,
-                  continueDisabled: true,
-                  metaData: {'Name': ''}};
+                  continueDisabled: true};
 
     //Variable initializations
     this.clicks = 0;

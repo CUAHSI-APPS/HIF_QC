@@ -63,9 +63,10 @@ def triggerRunTest(sessionId):
 @app.route('/test/result/<sessionId>')
 @cross_origin()
 def getResult(sessionId):
-	fp = redis.get(sessionId+'outputcsv').decode('utf-8')
+	fp = redis.get(sessionId+'outputcsv')
 
 	if fp != None:
+		fp = fp.decode('utf-8')
 		result = dataManager.getOutputAsDf(sessionId, fp)
 		indexCol = dataManager.getNdxName(sessionId)
 
@@ -81,7 +82,7 @@ def getResult(sessionId):
 
 		return json.dumps({'csv':df.to_csv()})
 
-	return 'None'
+	return json.dumps('None')
 
 # Run Main
 if __name__ == '__main__':
