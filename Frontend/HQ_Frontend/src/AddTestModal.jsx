@@ -148,7 +148,7 @@ class AddTestModal extends React.Component {
         break;
 
       default:
-        return(<input key={uuidv4()} className="form-control" parameter-name={parameter['Name']} placeholder="0.0" onChange={this.handleValueInput}/>)
+        return(<input key={uuidv4()} className="form-control" parameter-name={parameter['Name']} placeholder="0" onChange={this.handleValueInput}/>)
         break;
    }
 
@@ -214,7 +214,7 @@ class AddTestModal extends React.Component {
                 <div className="col-sm-4">
                   <form>
                     <div className="form-group">
-                       <select className="form-control" style={{minWidth :'100%'}} onChange={this.handleTestSelection}>
+                       <select className="form-control" style={{minWidth :'100%'}} value={this.state['currentTest']} onChange={this.handleTestSelection}>
                         {testOptions}
                        </select>
                      </div>
