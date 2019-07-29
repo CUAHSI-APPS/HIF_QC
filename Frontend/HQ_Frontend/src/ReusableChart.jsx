@@ -1,6 +1,6 @@
 'use strict';
 
-import {VictoryChart,VictoryLine,VictoryTheme,VictoryZoomContainer} from 'victory';
+import {VictoryChart,VictoryLine,VictoryTheme,VictoryZoomContainer, VictoryLabel} from 'victory';
 
 class ReusableChart extends React.Component {
   constructor(props){
@@ -23,7 +23,7 @@ class ReusableChart extends React.Component {
     return(
       <VictoryChart scale={{x:"time"}}
           containerComponent={
-              <VictoryZoomContainer downsample={150}/>
+              <VictoryZoomContainer downsample={50}/>
           }>
         {charts}
       </VictoryChart>

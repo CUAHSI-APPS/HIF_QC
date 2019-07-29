@@ -198,7 +198,6 @@ class AddTestModal extends React.Component {
 
 
 
-
     return(
       <>
         <Modal dialogClassName="wide-modal" show={this.props.active} onHide={this.props.handleModalClose}>
