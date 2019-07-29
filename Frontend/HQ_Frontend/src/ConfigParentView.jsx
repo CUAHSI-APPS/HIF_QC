@@ -23,7 +23,7 @@ class ConfigParentView extends React.Component {
       "dataColList": [],
       "indexCol": '',
       "timeStep": 10,
-      "rateOfDownsample": 3
+      "rateOfDownsample": 1
     }
 
     this.mdSchema = {

@@ -23,7 +23,7 @@ class ReusableChart extends React.Component {
     return(
       <VictoryChart scale={{x:"time"}}
           containerComponent={
-              <VictoryZoomContainer downsample={100}/>
+              <VictoryZoomContainer downsample={150}/>
           }>
         {charts}
       </VictoryChart>
