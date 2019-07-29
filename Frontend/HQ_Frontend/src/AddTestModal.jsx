@@ -136,7 +136,7 @@ class AddTestModal extends React.Component {
         otherColumns = this.colNames.map((dataStream) => {
           if(dataStream !== this.props.selectedDS){
                if(first){
-                 return <option key={uuidv4()} selected="selected" >{dataStream}</option>
+                 return <option key={uuidv4()}>{dataStream}</option>
                  first = false;
                } else{
                  return <option key={uuidv4()}>{dataStream}</option>
@@ -144,7 +144,7 @@ class AddTestModal extends React.Component {
            }
         });
 
-        return(<select key={uuidv4()} className="form-control" parameter-name={parameter['Name']} value={this.state.value} onChange={this.handleValueInput}>{otherColumns}</select>)
+        return(<select key={uuidv4()} className="form-control" parameter-name={parameter['Name']} onChange={this.handleValueInput}>{otherColumns}</select>)
         break;
 
       default:
