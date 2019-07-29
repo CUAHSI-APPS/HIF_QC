@@ -99,13 +99,16 @@ class RepeatValueTest(Test):
 
     def runTest(self, dataframe):
         dfcopy = dataframe.copy()
-        dfcopy['cumsum'] = (dfcopy[self.column] != dfcopy[self.column].shift(1)).cumsum()
-        groups = dfcopy.groupby('cumsum', as_index=False).apply(lambda x: (x.shape[0], x[self.column].index[0]))
-        dfcopy[self.column ] = False
-        for group in groups:
-          start = group[1]
-          count = group[0]
-          dfcopy[self.column ][start:start+count] = count is not self.threshold   # hopefully it works :). Test this line of code.
 
-        dfcopy[self.column ] = dfcopy[self.column ].astype(bool,False)
-        return dfcopy[self.column ].apply(lambda x: self.flag.flag(x, self.testName))
+        dfcopy[self.column] = dfcopy[self.column].duplicated();
+
+        # dfcopy['cumsum'] = (dfcopy[self.column] != dfcopy[self.column].shift(1)).cumsum()
+        # groups = dfcopy.groupby('cumsum', as_index=False).apply(lambda x: (x.shape[0], x[self.column].index[0]))
+        # dfcopy[self.column ] = False
+        # for group in groups:
+        #   start = group[1]
+        #   count = group[0]
+        #   dfcopy[self.column ][start:start+count] = count == self.threshold   # hopefully it works :). Test this line of code.
+        #
+        # dfcopy[self.column ] = dfcopy[self.column ].astype(bool,False)
+        return dfcopy[self.column].apply(lambda x: self.flag.flag(not x, self.testName))

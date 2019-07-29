@@ -157,7 +157,8 @@ def get_downsampled_data_vis(sessionId):
 		for index, row in data.iterrows():
 			formattedData.append({
 			'x': index,
-			'y': row[col]
+			'y': row[col],
+			'label': "Date Time: " + str(index) +"\n Value: " + str(row[col])
 			})
 		visData[col] = formattedData
 
