@@ -1,10 +1,17 @@
+import json
+
+
 class Flag:
     def __init__(self):
+        self.config = "../SessionFiles/Flagging_Config.json"
         self.flagCodes = self.fetchFlagConfig();
 
     def fetchFlagConfig(self):
         # insert reading and parsing of flag configuration
         flagCodes = {'None':'0', 'Basic Outlier Test':'1', 'Repeat Value Test':'2', 'Spatial Inconsistency':'3', 'Machine Learning':'4'};
+
+        with open(self.config, 'r') as F:
+            flagCodes = json.load(F)
 
         return flagCodes;
 
