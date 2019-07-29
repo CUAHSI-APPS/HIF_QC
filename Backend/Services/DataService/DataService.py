@@ -149,7 +149,7 @@ def get_downsampled_data_vis(sessionId):
 
 	filePath = dataManager.retrieveFileLoc(sessionId)
 	data = dataManager.retrieveOnlyDataCols(filePath, requestContent['dataColList'], indexName=requestContent['indexCol'])
-	data = dataManager.downSample(data, requestContent['timeStep'], requestContent['rateOfDownsample'])
+	# data = dataManager.downSample(data, requestContent['timeStep'], requestContent['rateOfDownsample'])
 
 	data = data.fillna("null")
 
