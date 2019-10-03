@@ -22,9 +22,6 @@ class TestConusmer():
                 s1[col] = s2[col]
         return s1
 
-
-
-
     def receive(self):
 
         run = True
