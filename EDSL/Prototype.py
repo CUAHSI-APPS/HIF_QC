@@ -119,7 +119,6 @@ class Dataset():
                             for j, dt in enumerate(col):
                                 self._timeCols[i][j] = parse(dt)
 
-
                 except:
                     traceback.print_exc(file=sys.stdout)
                     print("\n---------------------------------\n")

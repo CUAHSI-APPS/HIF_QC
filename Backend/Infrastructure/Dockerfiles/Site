@@ -1,6 +1,7 @@
-FROM python:3.7
+FROM nikolaik/python-nodejs:latest
 COPY Frontend/HQ_Frontend code/HQ_Frontend
 WORKDIR /code/HQ_Frontend
 ENV FLASK_APP=main
 RUN pip3 install -r requirements.txt
+CMD npm run build
 CMD python /code/HQ_Frontend/main.py
