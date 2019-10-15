@@ -1,9 +1,13 @@
 # taking the lead from pandas,
 #  internal arrays are numpy representations
 import numpy as np
+import builtins
+import traceback
+import sys
 from datetime import datetime
-from dateutil.parser import parser
-import __builtin__
+from dateutil.parser import parse
+
+
 
 
 '''
@@ -93,7 +97,7 @@ class Dataset():
             for i, col in enumerate(self._colNames):
                 colName = col.upper()
                 # put in an arbitrairy number of datetime arrays
-                if (("TIME" in colName) or ("DATE" in colName)):
+                if ((b"TIME" in colName) or (b"DATE" in colName)):
                     if(self._timeCols is None):
                         self._timeCols = np.empty((0, colmjr.shape[1]), dtype='datetime64')
 
@@ -105,18 +109,21 @@ class Dataset():
                 self._timeCols = self._timeCols.astype('datetime64')
             except:
                 try:
+                    print("Gets here")
                     if(dateTimeFormat is not None):
                         for col in self._timeCols:
                             for dt in col:
                                 dt = parse(dt)
                     elif(dateTimeFormat is None):
-                        for col in self._timeCols:
-                            for dt in col:
-                                dt = parse(dt)
+                        for i, col in enumerate(self._timeCols):
+                            for j, dt in enumerate(col):
+                                self._timeCols[i][j] = parse(dt)
+
 
                 except:
+                    traceback.print_exc(file=sys.stdout)
+                    print("\n---------------------------------\n")
                     print("Warning: Dataset unable to automatically translate datetime column to datetime datatpe.")
-                # else warn
 
 
 
