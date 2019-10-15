@@ -100,13 +100,33 @@ class RepeatValueTest(Test):
     def runTest(self, dataframe):
         dfcopy = dataframe.copy()
 
+        # get repeating or unique ids for repeating values
         dfcopy['cumsum'] = (dfcopy[self.column] != dfcopy[self.column].shift(1)).cumsum()
-        groups = dfcopy.groupby('cumsum', as_index=False).apply(lambda x: (x.shape[0], x[self.column].index[0]))
-        dfcopy[self.column ] = False
-        for group in groups:
-          start = group[1]
-          count = group[0]
-          dfcopy[self.column ][start:start+count] = count == self.threshold   # hopefully it works :). Test this line of code.
 
-        dfcopy[self.column ] = dfcopy[self.column ].astype(bool,False)
-        return dfcopy[self.column].apply(lambda x: self.flag.flag(x, self.testName))
+        # group all values by count of cumsum "id"
+        # and filter down to only incidents of repeat value
+        counts = dfcopy[['cumsum',self.column]].groupby(['cumsum']).agg('count')
+        counts_less = counts.loc[counts[self.column] > 1]
+
+        # join the multiple counts back to the main df
+        dfcopy = dfcopy.join(counts_less, on='cumsum', lsuffix='_caller', rsuffix='_other')
+
+        # load our original values with booleans expressing if they exceed the threshold or not
+        dfcopy[self.column] = dfcopy[self.column + '_other'].map(lambda x: x >= self.threshold)
+
+        # Didn't quite work properly. the above algorithm does work however
+        #
+        # dfcopy['cumsum'] = (dfcopy[self.column] != dfcopy[self.column].shift(1)).cumsum()
+        # groups = dfcopy.groupby('cumsum', as_index=False).apply(lambda x: (x.shape[0], x[self.column].index[0]))
+        # dfcopy[self.column ] = False
+        # for group in groups:
+        #   start = group[1]
+        #   count = group[0]
+        #   dfcopy[self.column ][start:start+count] = count == self.threshold   # hopefully it works :). Test this line of code.
+        #
+        # dfcopy[self.column ] = dfcopy[self.column ].astype(bool,False)
+
+        print(dfcopy[self.column].apply(lambda x: self.flag.flag((not x), self.testName)))
+
+        # not x for now. Need to align the true false across datatypes
+        return dfcopy[self.column].apply(lambda x: self.flag.flag((not x), self.testName))
