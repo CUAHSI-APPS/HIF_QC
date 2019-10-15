@@ -73,6 +73,8 @@ def getResult(sessionId):
 		df = dataManager.getDataAsDf(sessionId)
 		df.rename(columns=lambda x: x if x == indexCol else x+"_flags", inplace=True)
 
+
+
 		for col in df.columns:
 			if col is not indexCol:
 				df[col] = df[col].map(lambda x: '-')
