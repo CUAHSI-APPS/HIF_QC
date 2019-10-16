@@ -126,7 +126,6 @@ class RepeatValueTest(Test):
         #
         # dfcopy[self.column ] = dfcopy[self.column ].astype(bool,False)
 
-        print(dfcopy[self.column].apply(lambda x: self.flag.flag((not x), self.testName)))
 
         # not x for now. Need to align the true false across datatypes
-        return dfcopy[self.column].apply(lambda x: self.flag.flag((not x), self.testName))
+        return dfcopy[self.column].apply(lambda x: self.flag.flag(x, self.testName))
