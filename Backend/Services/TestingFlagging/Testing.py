@@ -44,10 +44,6 @@ def uploadConfigs(sessionId):
 		jsonConfig['sessionId'] = sessionId
 		redis.set(sessionId+"testConfig", json.dumps(jsonConfig))
 
-	# use json for building tests
-
-	# with open('/SessionFiles/debug.txt', 'w') as f:
-	# 	f.write(json.dumps(jsonConfig["RS_kw_m2_Min kW/m2 Minimum"]))
 
 	return("Configurations stored successfully.")
 
@@ -72,8 +68,6 @@ def getResult(sessionId):
 
 		df = dataManager.getDataAsDf(sessionId)
 		df.rename(columns=lambda x: x if x == indexCol else x+"_flags", inplace=True)
-
-
 
 		for col in df.columns:
 			if col is not indexCol:

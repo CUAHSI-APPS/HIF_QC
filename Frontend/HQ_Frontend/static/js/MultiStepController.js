@@ -21,16 +21,18 @@ window.NextProgressBar = function(NextStep) {
             });
         }
 
-        $('#StepPlaceholder').load("/view/SetStep/Step_" + NextStep, function(){
-          if(NextStep === 3){
-            loadTestConfigComponents();
-          }
-
-          if(NextStep === 4){
-
-          }
-
+        if(NextStep === 5){
+          let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${JSON.parse(sessionStorage.dataCols)[0]}`
+          console.log(endpoint)
+          $('#StepPlaceholder').load(endpoint);
+        }
+        else{
+          $('#StepPlaceholder').load("/view/SetStep/Step_" + NextStep, function(){
+            if(NextStep === 3){
+              loadTestConfigComponents();
+            }
         });
+      }
     }
 }
 
@@ -52,9 +54,14 @@ function PreviousProgressBar(PreviousStep) {
         currentTask.removeClass("active");
     }
 
-    $('#StepPlaceholder').load("/view/SetStep/Step_" + PreviousStep, function(){
-      if(PreviousStep === 3){
-        loadTestConfigComponents();
-      }
-    });
+    if(NextStep === 5){
+      $('#StepPlaceholder').load(`/view/flagReview/${sessionStorage.sessionId}?colName=${sessionStorage.dataCols[0]}&indexCol=${sessionStorage.indexCol}`);
+    }
+    else{
+      $('#StepPlaceholder').load("/view/SetStep/Step_" + PreviousStep, function(){
+        if(PreviousStep === 3){
+          loadTestConfigComponents();
+        }
+      });
+    }
 }
