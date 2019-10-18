@@ -7,6 +7,9 @@ import sys
 from datetime import datetime
 from dateutil.parser import parse
 
+from pylms import lms, stage
+from pylms.rep import Rep                  # add our snek-lms module
+
 
 
 
