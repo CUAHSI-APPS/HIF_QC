@@ -109,7 +109,7 @@ class ConfigParentView extends React.Component {
        for(var col in this.colNames){
          md[this.colNames[col]] = Object.assign(md[this.colNames[col]], this.mdSchema);
 
-         //chse you wiley rascal you!
+         //chase you wiley rascal you!
          delete md[this.colNames[col]]['Easter Egg'];
        }
        this.metaData = md;
@@ -274,10 +274,16 @@ class ConfigParentView extends React.Component {
    postTestConfigs(){
      let endpoint = this.testMgrEndpoint + sessionStorage.getItem('sessionId');
 
+     //store what tests have tests configured
+     let testedCols = [];
+     for(var key in this.allTests){
+        testedCols.push(key);
+      }
+
+     sessionStorage.setItem('testedCols', JSON.stringify(testedCols));
+
      //add time index to our service
      this.allTests['timeIndex'] = sessionStorage.getItem('indexCol');
-
-
 
      console.log(this.allTests);
 

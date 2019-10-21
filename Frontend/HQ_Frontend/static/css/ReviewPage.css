@@ -1,0 +1,9 @@
+.metadata-box{
+  border: 1px red dotted;
+  max-height: 20vh;
+}
+.flags-box{
+  border: 1px black dotted;
+  max-height: 40vh;
+  overflow-y: scroll;
+}
