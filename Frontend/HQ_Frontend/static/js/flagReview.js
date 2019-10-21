@@ -40,10 +40,10 @@ function manageViewCol(signal, currentCol){
 $('#right').on('click', function(){
     col = manageViewCol(FRConst.NEXT, parseInt(sessionStorage.getItem('currentCol')));
 
-    console.log(col)
-
-    let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${JSON.parse(sessionStorage.dataCols)[col]}`
+    let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.dataCols)[col])}`
     $('#StepPlaceholder').load(endpoint);
+
+    sessionStorage.setItem('currentCol', col);
 })
 
 
@@ -51,8 +51,8 @@ $('#right').on('click', function(){
 $('#left').on('click', function(){
     col = manageViewCol(FRConst.PREVIOUS, parseInt(sessionStorage.getItem('currentCol')));
 
-    console.log(col)
-
-    let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${JSON.parse(sessionStorage.dataCols)[col]}`
+    let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.dataCols)[col])}`
     $('#StepPlaceholder').load(endpoint);
+
+    sessionStorage.setItem('currentCol', col);
 })

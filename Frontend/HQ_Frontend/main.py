@@ -54,6 +54,8 @@ def FetchFlagReview(sessionId):
 
     flags = dataManager.getOutputAsDf(sessionId, fp)
 
+    flags.to_csv('flags_debug.csv');
+
     indexCol = flags.index
     singleSeries = flags[col+"_flags"]
 
