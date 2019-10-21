@@ -22,10 +22,15 @@ window.NextProgressBar = function(NextStep) {
         }
 
         if(NextStep === 5){
-          let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${JSON.parse(sessionStorage.dataCols)[0]}`
-          console.log(endpoint)
+          let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${JSON.parse(sessionStorage.testedCols)[0]}`
           $('#StepPlaceholder').load(endpoint);
+
+          //load current column in sessionStorage
+          //this should not cause problems as in step 3 there must be at least one
+          // test on one column to proceed
+          sessionStorage.setItem('currentCol', 0);
         }
+
         else{
           $('#StepPlaceholder').load("/view/SetStep/Step_" + NextStep, function(){
             if(NextStep === 3){

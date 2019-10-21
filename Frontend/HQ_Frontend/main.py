@@ -67,7 +67,7 @@ def FetchFlagReview(sessionId):
         flagobjs.append(obj)
 
 
-    return render_template('Step_5.html', flags=flagobjs)
+    return render_template('Step_5.html', colName=col, flags=flagobjs, okFlag="OK")
 
 
 @app.route('/view/SetStep/<page>',methods= ['POST', 'GET'])
