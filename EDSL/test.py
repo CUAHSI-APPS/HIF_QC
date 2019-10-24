@@ -1,3 +1,5 @@
 from Prototype import Flag, TimeSeries, Dataset, Evaluator
 
-DS = Dataset("Rockland_Met_TenMin_2018_09_8370_49842.csv")
+DS = Dataset("data/rockland.csv", numHeaderLines=9)
+DS2 = Dataset("data/evergreen.csv")
+DS3 = Dataset("data/bigelow_soilMTP_2017.csv", numHeaderLines=2)
