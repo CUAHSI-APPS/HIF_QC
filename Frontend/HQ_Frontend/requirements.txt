@@ -3,3 +3,4 @@ Jinja2==2.10
 pandas
 redis
 kafka-python
+bokeh

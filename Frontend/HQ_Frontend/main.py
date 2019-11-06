@@ -4,6 +4,7 @@ from flask import Flask, request, render_template, redirect, url_for
 from redis import Redis
 from werkzeug.utils import secure_filename
 from Backend.Classes.Data import DataManager
+from Backend.Classes.Vis import VisBuilder
 import json
 import util
 
@@ -46,12 +47,11 @@ def index():
 
 @app.route('/view/flagReview/<sessionId>')
 def FetchFlagReview(sessionId):
+    VB = VisBuilder();
     # get the name of our current time series column
     col = request.args.get('colName')
     # get flags
     fp = redis.get(sessionId+'outputcsv')
-
-
     flags = dataManager.getOutputAsDf(sessionId, fp)
 
     flags.to_csv('flags_debug.csv');
@@ -60,16 +60,20 @@ def FetchFlagReview(sessionId):
     singleSeries = flags[col+"_flags"]
 
     flagobjs = []
-
     for i, flag in enumerate(singleSeries):
         obj = {}
         obj['code'] = flag
         obj['datetime'] = indexCol[i]
-
         flagobjs.append(obj)
 
+    # build visualization
+    fileName = dataManager.retrieveFileLoc(sessionId)
+    dataCol = dataManager.retrieveOnlyDataCols(fileName, [col], None)[col]
 
-    return render_template('Step_5.html', colName=col, flags=flagobjs, okFlag="OK")
+    script, div = VB.BuildLineChart(indexCol, dataCol, singleSeries)
+
+
+    return render_template('Step_5.html', colName=col, flags=flagobjs, okFlag="OK", chartScript=script, chartDiv=div)
 
 
 @app.route('/view/SetStep/<page>',methods= ['POST', 'GET'])

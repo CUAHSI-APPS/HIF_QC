@@ -114,18 +114,6 @@ class RepeatValueTest(Test):
         # load our original values with booleans expressing if they exceed the threshold or not
         dfcopy[self.column] = dfcopy[self.column + '_other'].map(lambda x: x >= self.threshold)
 
-        # Didn't quite work properly. the above algorithm does work however
-        #
-        # dfcopy['cumsum'] = (dfcopy[self.column] != dfcopy[self.column].shift(1)).cumsum()
-        # groups = dfcopy.groupby('cumsum', as_index=False).apply(lambda x: (x.shape[0], x[self.column].index[0]))
-        # dfcopy[self.column ] = False
-        # for group in groups:
-        #   start = group[1]
-        #   count = group[0]
-        #   dfcopy[self.column ][start:start+count] = count == self.threshold   # hopefully it works :). Test this line of code.
-        #
-        # dfcopy[self.column ] = dfcopy[self.column ].astype(bool,False)
-
 
         # not x for now. Need to align the true false across datatypes
         return dfcopy[self.column].apply(lambda x: self.flag.flag(x, self.testName))
