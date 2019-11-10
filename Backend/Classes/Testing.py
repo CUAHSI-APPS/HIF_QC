@@ -97,6 +97,7 @@ class RepeatValueTest(Test):
           if parameter['Name'] == 'Repeating Threshold':
             self.threshold = int(parameter['Value'])
 
+
     def runTest(self, dataframe):
         dfcopy = dataframe.copy()
 
@@ -112,7 +113,7 @@ class RepeatValueTest(Test):
         dfcopy = dfcopy.join(counts_less, on='cumsum', lsuffix='_caller', rsuffix='_other')
 
         # load our original values with booleans expressing if they exceed the threshold or not
-        dfcopy[self.column] = dfcopy[self.column + '_other'].map(lambda x: x >= self.threshold)
+        dfcopy[self.column] = dfcopy[self.column + '_other'].map(lambda x: not (x >= self.threshold))
 
 
         # not x for now. Need to align the true false across datatypes

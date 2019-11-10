@@ -2,8 +2,8 @@ import json
 
 
 class Flag:
-    def __init__(self):
-        self.config = "../SessionFiles/Flagging_Config.json"
+    def __init__(self, config='../SessionFiles/Flagging_Config.json'):
+        self.config = config
         self.flagCodes = self.fetchFlagConfig();
 
     def fetchFlagConfig(self):
