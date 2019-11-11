@@ -13,8 +13,7 @@ class AddTestModal extends React.Component {
     super(props);
 
     this.state = {subModalView:false,
-                  visualizedDataStreams:[],
-                  currentTest: this.props.getFirstDefaultTest()['Type']}
+                  visualizedDataStreams:[]}
 
     //get columns from session storage
     this.colNames = JSON.parse(sessionStorage.getItem('dataCols'))
@@ -30,6 +29,7 @@ class AddTestModal extends React.Component {
     this.handleValueInput = this.handleValueInput.bind(this);
   }
 
+
   handleAddData(){
     //add all selected data stream except the current data stream (slice(1))
     let newDS = this.state.visualizedDataStreams.slice(1);
@@ -41,7 +41,7 @@ class AddTestModal extends React.Component {
     this.state.visualizedDataStreams = [this.props.selectedDS];
 
     let defaultTest = this.props.getFirstDefaultTest();
-    this.setState({currentTest: defaultTest['Type']});
+    this.props.setFirstDefaultTest(defaultTest['Type']);
 
     this.props.handleModalClose();
   }
@@ -61,15 +61,13 @@ class AddTestModal extends React.Component {
     possibleTests = this.props.setPossibleNewTests();
 
     if(possibleTests.length != 0){
-      this.setState({currentTest: possibleTests[0]['Type']});
+      this.props.setFirstDefaultTest(possibleTests[0]['Type']);
       this.props.handleModalClose(true);
     } else {
       this.props.handleModalClose(false);
     }
 
   }
-
-
 
   //submodal Functionality
   openSubMenu(){
@@ -102,7 +100,7 @@ class AddTestModal extends React.Component {
   handleTestSelection(e){
     let testInfo;
 
-    this.setState({currentTest:e.target.value});
+    this.props.setFirstDefaultTest(e.target.value);
 
     for(let test in this.props.testInfo){
        if(this.props.testInfo[test]['Type'] === e.target.value){
@@ -152,12 +150,15 @@ class AddTestModal extends React.Component {
         break;
    }
 
+
   }
 
   render(){
     let testOptions, testConfigurations;
     let dataStreamOptions;
     let inputTagGroup;
+
+
 
     //pass test info down as subset of possible testTypes
     testOptions = this.props.testInfo.map((test) => {
@@ -173,10 +174,11 @@ class AddTestModal extends React.Component {
      //Loading Test Configurations
      // Need to push this into a function
      testConfigurations = this.props.testInfo.map((test) => {
-          if(!isDefined(this.state.currentTest)){
+          console.log(this.props.currentTest);
+          if(!isDefined(this.props.currentTest)){
             return(null);
           }
-          else if(this.state.currentTest === test['Type']){
+          else if(this.props.currentTest === test['Type']){
             return(
               test['Parameters'].map((parameter) => {
                   inputTagGroup = this.handleRenderDifferentParamInputs(parameter);
@@ -194,10 +196,6 @@ class AddTestModal extends React.Component {
           }
       });
 
-
-
-
-
     return(
       <>
         <Modal dialogClassName="wide-modal" show={this.props.active} onHide={this.props.handleModalClose}>
@@ -214,7 +212,7 @@ class AddTestModal extends React.Component {
                 <div className="col-sm-4">
                   <form>
                     <div className="form-group">
-                       <select className="form-control" style={{minWidth :'100%'}} value={this.state['currentTest']} onChange={this.handleTestSelection}>
+                       <select className="form-control" style={{minWidth :'100%'}} value={this.props['currentTest']} onChange={this.handleTestSelection}>
                         {testOptions}
                        </select>
                      </div>
@@ -240,7 +238,9 @@ class AddTestModal extends React.Component {
 
         <Modal show={this.state.subModalView} onHide={this.closeSubmenu}>
             <Modal.Header closeButton>
-              <Modal.Title>Add a Data Stream to the Visualization</Modal.Title>
+              <Modal.Title>
+                Add a Data Stream to the Visualization
+              </Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <select multiple={true} onChange={this.handleSelections}>

@@ -11,7 +11,8 @@ class ConfigTestViews extends React.Component {
     this.state = {addTestModal: false,
                   modTestModal: false,
                   selectedTest: null,
-                  possibleTests: this.props.testTypes};
+                  possibleTests: this.props.testTypes,
+                  currentTest: {'Type': null}};
 
     this.tempTestJSON = {};
 
@@ -26,6 +27,7 @@ class ConfigTestViews extends React.Component {
     this.testSelected = this.testSelected.bind(this);
     this.disableModRmv = this.disableModRmv.bind(this);
     this.handleRmvTest = this.handleRmvTest.bind(this);
+    this.setFirstDefaultTest = this.setFirstDefaultTest.bind(this);
 
   }
 
@@ -33,7 +35,10 @@ class ConfigTestViews extends React.Component {
       return this.state.possibleTests[0];
   }
 
-  //start here tomorrow
+  setFirstDefaultTest(newCurrent){
+    this.setState({currentTest:newCurrent});
+  }
+
   setPossibleNewTests(){
     let possibleTests = [];
     let at = this.props.activeTests;
@@ -65,15 +70,16 @@ class ConfigTestViews extends React.Component {
   handleAddTest(){
     let possibleTests;
 
-    this.setState({addTestModal:true});
-    this.setState({modTestModal:false});
-
     //set temp test json clear
     //pending development of first default test
     possibleTests = this.setPossibleNewTests();
 
     let defaultTest = possibleTests[0];
+    this.setState({currentTest: defaultTest['Type']});
     this.rebuildTempTestJSON(defaultTest);
+
+    this.setState({addTestModal:true});
+    this.setState({modTestModal:false});
   }
 
   handleModTest(){
@@ -160,7 +166,8 @@ class ConfigTestViews extends React.Component {
         addData={this.props.addData}
         testJSON={this.tempTestJSON}
         rebuildJSON={this.rebuildTempTestJSON}
-        getFirstDefaultTest={this.getFirstDefaultTest}
+        setFirstDefaultTest={this.setFirstDefaultTest}
+        currentTest={this.state.currentTest}
         addTest={this.props.addTest}
         setPossibleNewTests={this.setPossibleNewTests}/>
       </>
