@@ -1,1 +1,6 @@
-{"None": "OK", "Basic Outlier Test": "Outlier", "Repeat Value Test": "Repeat Val", "Spatial Inconsistency": "Inconsistent", "Machine Learning": "4"}
+{"None": "OK",
+"Basic Outlier Test": "Outlier",
+"Repeat Value Test": "Repeat Val",
+"Spatial Inconsistency": "Spatially Inconsistent",
+"Missing Value": "Missing Measurement", 
+"Machine Learning": "4"}

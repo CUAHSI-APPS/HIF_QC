@@ -55,16 +55,22 @@ class TestConusmer():
                                 testrunner = RangeTest(1, **test)
                                 flags = testrunner.runTest(df)
 
-
                             elif test['Type'] == 'Repeat Value Test':
                                 print ("RVT", flush=True)
-                                testrunner = RepeatValueTest(1, **test)
+                                testrunner = RepeatValueTest(2, **test)
                                 flags = testrunner.runTest(df)
 
                             elif test['Type'] == 'Spatial Inconsistency':
                                 print ("SPATIAL INCONSISTENCY", flush=True)
-                                testrunner = SpatialInconsistencyTest(1, **test)
+                                testrunner = SpatialInconsistencyTest(3, **test)
                                 flags = testrunner.runTest(df)
+
+                            elif test['Type'] == 'Missing Value':
+                                # run missingvaltest by default
+                                print("MissingValTest")
+                                testrunner = MissingValTest(4)
+                                flags = testrunner.runTest(df)
+
 
                             if flags.name+"_flags" not in outdf.columns:
                                 outdf[flags.name+"_flags"] = flags
@@ -72,10 +78,13 @@ class TestConusmer():
                                 outdf[flags.name+"_flags"] = self.combineFlagCols(outdf[flags.name+"_flags"], flags)
 
 
+
                         except Exception as e:
                             print ("there was an error in one of the tests", flush=True)
                             traceback.print_exc(file=sys.stdout)
                             continue
+
+
 
 
                 # set datetime as the index of our flags

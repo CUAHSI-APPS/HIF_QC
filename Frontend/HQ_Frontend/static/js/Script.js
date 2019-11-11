@@ -162,7 +162,6 @@ function queryStatus() {
           window.csv = data['csv'];
           $('#headerTest').text("Test Complete!");
           $('#csv-btn').prop('disabled', false);
-          console.log(window.csv);
         }
       })
     }, 1000);
@@ -170,14 +169,21 @@ function queryStatus() {
 }
 
 function downloadCSV(){
-  var encodedUri = 'data:text/csv;charset=utf-8,' + encodeURI(window.csv);
-  var link = document.createElement("a");
-    link.target = '_blank';
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "flags.csv");
-    document.body.appendChild(link); // Required for FF
+  let endpoint = "http://localhost:8085/test/result/"
+  endpoint = endpoint + sessionStorage.getItem("sessionId");
 
-  link.click(); // This will download the data file named "my_data.csv".
+  fetch(endpoint)
+  .then((response) => response.json())
+  .then( (d) => {
+      var encodedUri = 'data:text/csv;charset=utf-8,' + encodeURI(d['csv']);
+      var link = document.createElement("a");
+        link.target = '_blank';
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", "flags.csv");
+        document.body.appendChild(link); // Required for FF
+
+      link.click();
+  });
 }
 
 function RunTest() {

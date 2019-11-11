@@ -44,6 +44,21 @@ class Test:
     def runTest(self):
         return False
 
+class MissingValTest(Test):
+        def __init__ (self, testId = 1, **kwargs):
+            self.flag = Flag()
+            self.id = testId
+            self.column = kwargs["Column"]
+            self.testName = kwargs["Type"]
+
+
+        # data must be a float list
+        # returns a set of boolean flags
+        def runTest (self, dataframe):
+            # needs flagging
+            outdf = dataframe.isna()[self.column]
+            return outdf.apply(lambda x: self.flag.flag(x, self.testName))
+
 class RangeTest(Test):
     def __init__ (self, testId = 1, **kwargs):
         self.flag = Flag()
