@@ -56,20 +56,20 @@ class TestConusmer():
                                 flags = testrunner.runTest(df)
 
                             elif test['Type'] == 'Repeat Value Test':
-                                print ("RVT", flush=True)
+                                print ("Repeat Value Test", flush=True)
                                 testrunner = RepeatValueTest(2, **test)
                                 flags = testrunner.runTest(df)
 
                             elif test['Type'] == 'Spatial Inconsistency':
-                                print ("SPATIAL INCONSISTENCY", flush=True)
+                                print ("Spatial Inconsistency", flush=True)
                                 testrunner = SpatialInconsistencyTest(3, **test)
                                 flags = testrunner.runTest(df)
 
-                            elif test['Type'] == 'Missing Value':
-                                # run missingvaltest by default
-                                print("MissingValTest")
-                                testrunner = MissingValTest(4)
-                                flags = testrunner.runTest(df)
+                            # elif test['Type'] == 'Missing Value Test':
+                            #     # run missingvaltest by default
+                            #     print("MissingValTest")
+                            #     # testrunner = MissingValTest(4, **test)
+                            #     # flags = testrunner.runTest(df)
 
 
                             if flags.name+"_flags" not in outdf.columns:
@@ -78,11 +78,11 @@ class TestConusmer():
                                 outdf[flags.name+"_flags"] = self.combineFlagCols(outdf[flags.name+"_flags"], flags)
 
 
-
                         except Exception as e:
-                            print ("there was an error in one of the tests", flush=True)
+                            print("there was an error in one of the tests", flush=True)
                             traceback.print_exc(file=sys.stdout)
                             continue
+
 
 
 

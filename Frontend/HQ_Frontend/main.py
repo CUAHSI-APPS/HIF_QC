@@ -71,13 +71,7 @@ def FetchFlagReview(sessionId):
     fileName = dataManager.retrieveFileLoc(sessionId)
     dataCol = dataManager.retrieveOnlyDataCols(fileName, [col], None)[col]
 
-    with open('flag.dbg.txt', 'w+') as f:
-        f.write(json.dumps(str(fileName)))
-
     script, div = VB.BuildLineChart(indexCol, dataCol, singleSeries)
-
-    with open('flag.dbg.txt', 'w+') as f:
-        f.write("gets past line chart build")
 
 
     return render_template('Step_5.html', colName=col, flags=flagobjs, okFlag="OK", chartScript=script, chartDiv=div)

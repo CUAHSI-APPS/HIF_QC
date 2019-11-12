@@ -84,6 +84,9 @@ class ConfigParentView extends React.Component {
         {'Name': 'Training Set', 'Data Type': 'TimeSeries'}, //column name
         {'Name': 'Percentage Training Data', 'Data Type' : 'Integer'},
         {'Name': 'Percentage Test Data', 'Data Type' : 'Integer'}
+      ]},
+      {'Type': 'Missing Value Test', 'Parameters':[
+        {'Name': 'Missing Value Alias (Optional)', "Data Type": 'Float'}
       ]}
     ];
   }

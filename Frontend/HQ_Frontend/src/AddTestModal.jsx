@@ -129,13 +129,19 @@ class AddTestModal extends React.Component {
 
    switch(parameter['Data Type']){
       case 'TimeSeries':
-        let first = true;
+        let first = true
+
         //get other columns as options
         otherColumns = this.colNames.map((dataStream) => {
           if(dataStream !== this.props.selectedDS){
                if(first){
-                 return <option key={uuidv4()}>{dataStream}</option>
                  first = false;
+                 for(let parameter in this.props.testJSON['Parameters']){
+                   if(this.props.testJSON['Parameters'][parameter]['Name'] === "Comparision Data"){
+                     this.props.testJSON['Parameters'][parameter]['Value'] = dataStream;
+                   }
+                 }
+                 return <option key={uuidv4()} select="selected">{dataStream}</option>
                } else{
                  return <option key={uuidv4()}>{dataStream}</option>
                }
