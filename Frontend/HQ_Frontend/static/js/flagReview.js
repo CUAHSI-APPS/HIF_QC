@@ -46,7 +46,7 @@ $('#right').on('click', function(){
 
     //construct the endpoint of our next column
     //and reload page
-    let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.dataCols)[col])}&indexCol=${encodeURIComponent(sessionStorage.indexCol)}`
+    let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.testedCols)[col])}&indexCol=${encodeURIComponent(sessionStorage.indexCol)}`
     $('#StepPlaceholder').load(endpoint);
 
     //update our current column in persistent memory
@@ -57,7 +57,7 @@ $('#right').on('click', function(){
 //bind new subpage to go back to previous
 $('#left').on('click', function(){
     col = manageViewCol(FRConst.PREVIOUS, parseInt(sessionStorage.getItem('currentCol')));
-    let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.dataCols)[col])}&indexCol=${encodeURIComponent(sessionStorage.indexCol)}`
+    let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.testedCols)[col])}&indexCol=${encodeURIComponent(sessionStorage.indexCol)}`
     $('#StepPlaceholder').load(endpoint);
 
     sessionStorage.setItem('currentCol', col);

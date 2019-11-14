@@ -103,49 +103,6 @@ function stepThreeCleanup(){
     //upload selected data cols for stats analysis
 }
 
-function SetMeta(name, item1, item2) {
-    $('#btnMeta').prop('disabled', false);
-    $('#btnAddTest').prop('disabled', false);
-    $('#metaTitle').text(name);
-    lower = item1;
-    upper = item2;
-    $('#tbMeta1').val(item1);
-    $('#tbMeta2').val(item2);
-    var item = "Name : " + name + "\nTempLower : " + item1 + "\nTempUpper : " + item2;
-    var $meta = $("#tbMeta");
-    $meta.val(item);
-    setTest();
-    $.get('/api/save/' + lower + '/' + upper);
-    $('#modalMeta').modal('hide');
-}
-
-function AddTest() {
-    var $test = $('#selectTest');
-    var num = $test.children().length;
-    num++;
-    var item = "<option value=\"Test_" + num + "\">Test_" + num + "</option>";
-    $test.append(item);
-    setValues();
-    $('#modalTest').modal('hide');
-    $('#btnModTest').prop('disabled', false);
-    $('#btnRmvTest').prop('disabled', false);
-    $('#nextTaskStep3').prop('disabled', false);
-}
-
-function RemoveTest() {
-    var $test = $('#selectTest');
-    var selectedItems = $test.val() || [];
-
-    for (var i = 0; i < selectedItems.length; i++) {
-        $test.find('[value="' + selectedItems[i] + '"]').remove();
-    }
-
-    if ($test.children().length === 0) {
-        $('#btnModTest').prop('disabled', true);
-        $('#btnRmvTest').prop('disabled', true);
-        $('#nextTaskStep3').prop('disabled', true);
-    }
-}
 
 function queryStatus() {
     let endpoint = "http://localhost:8085/test/result/"
@@ -161,7 +118,8 @@ function queryStatus() {
         else{
           window.csv = data['csv'];
           $('#headerTest').text("Test Complete!");
-          $('#csv-btn').prop('disabled', false);
+          $('#nextTask').prop('disabled', false);
+
         }
       })
     }, 1000);

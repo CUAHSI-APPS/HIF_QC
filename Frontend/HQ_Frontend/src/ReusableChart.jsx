@@ -8,6 +8,7 @@ class ReusableChart extends React.Component {
     this.colors = ["#c43a31","#b47631","#1F7077","#269834"]
   }
 
+
   render(){
     let charts = this.props.data.map((datastream, index) => {
       let color = index % 4;

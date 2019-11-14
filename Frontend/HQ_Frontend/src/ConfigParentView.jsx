@@ -51,6 +51,7 @@ class ConfigParentView extends React.Component {
     this.addTest = this.addTest.bind(this);
     this.deleteTest = this.deleteTest.bind(this);
     this.gotoNextPage = this.gotoNextPage.bind(this);
+    this.gotoPreviousPage = this.gotoPreviousPage.bind(this);
     this.postTestConfigs = this.postTestConfigs.bind(this);
     this.pullMetadata = this.pullMetadata.bind(this);
 
@@ -164,7 +165,7 @@ class ConfigParentView extends React.Component {
         }
       ).then((json) => {
           var data = json[selectedDataStream].map((x) => {
-            if( x['y'] === 'null'){
+            if( x['y'] === 'null' || x['y'] == -9999){
               x['y'] = null;
             }
             x['x'] = new Date(Date.parse(x['x']))
@@ -282,10 +283,11 @@ class ConfigParentView extends React.Component {
      //store what tests have tests configured
      let testedCols = [];
      for(var key in this.allTests){
-        testedCols.push(key);
+        if(this.allTests[key].length !== 0){
+          testedCols.push(key);
+        }
       }
 
-      console.log(testedCols);
 
      sessionStorage.setItem('testedCols', JSON.stringify(testedCols));
 
@@ -309,6 +311,10 @@ class ConfigParentView extends React.Component {
      this.postTestConfigs();
      window.NextProgressBar(4);
      /*PreviousProgressBar(2);*/
+   }
+
+   gotoPreviousPage(){
+     window.PreviousProgressBar(2);
    }
 
   render() {
@@ -343,7 +349,7 @@ class ConfigParentView extends React.Component {
       </div>
       <div className="row p-3 text-center">
           <div className="col-sm">
-              <button className="btn btn-secondary" onClick={() => {}}> Previous </button>
+              <button className="btn btn-secondary" onClick={this.gotoPreviousPage}> Previous </button>
           </div>
           <div className="col-sm">
               <button className="btn btn-success" disabled={this.state.continueDisabled} id="nextTaskStep3" onClick={this.gotoNextPage}> Continue > </button>

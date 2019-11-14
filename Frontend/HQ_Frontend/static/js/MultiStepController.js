@@ -33,6 +33,7 @@ window.NextProgressBar = function(NextStep) {
         }
 
         else{
+          console.log(NextStep)
           $('#StepPlaceholder').load("/view/SetStep/Step_" + NextStep, function(){
             if(NextStep === 3){
               loadTestConfigComponents();
@@ -60,7 +61,10 @@ function PreviousProgressBar(PreviousStep) {
         currentTask.removeClass("active");
     }
 
-    if(NextStep === 5){
+    if(PreviousStep === 1){
+      window.location.href = '/';
+    }
+    else if(PreviousStep === 5){
       $('#StepPlaceholder').load(`/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.testedCols)[0])}&indexCol=${encodeURIComponent(sessionStorage.indexCol)}`);
     }
     else{
