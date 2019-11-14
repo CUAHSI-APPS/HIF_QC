@@ -27,7 +27,7 @@ class VisBuilder():
             y = self.rmvMissingValues(y, flags)
 
         p = figure(title="Line", x_axis_type='datetime', plot_width=700, plot_height=400)
-        p.line(x=x, y=y)
+        p.line(x=x, y=y, line_color="#000000")
 
         i = 0
         while i < len(x)-1:
@@ -37,7 +37,7 @@ class VisBuilder():
             else:
                 badrng_st = x[i]
                 st = i
-                while i < len(x)-2 and self.FlagMgr.returnGoodFlag() not in flags[i]:
+                while (i < len(x)-2) and (flags[i] == flags[i+1]) and (self.FlagMgr.returnGoodFlag() not in flags[i]):
                     i += 1
                 badrng_end = x[i]
                 end = i
@@ -48,16 +48,16 @@ class VisBuilder():
 
                 color = None
                 for c, flag in enumerate(flagCodes):
-                    print(flag['code'], flags[st], flush=True)
                     if flag['code'] == flags[st]:
                         color = colorMap[c]
                         break
 
                 i += 1
 
-                print(color, flush=True)
-
-                badbox = BoxAnnotation(left=badrng_st, right=badrng_end, fill_alpha=0.4, fill_color=color)
+                if flags[st] == self.FlagMgr.returnFlag('Basic Outlier Test'):
+                    badbox = BoxAnnotation(left=badrng_st, right=badrng_end, fill_alpha=0.8, fill_color=color)
+                else:
+                    badbox = BoxAnnotation(left=badrng_st, right=badrng_end, fill_alpha=0.2, fill_color=color)
                 p.add_layout(badbox)
 
         return components(p)

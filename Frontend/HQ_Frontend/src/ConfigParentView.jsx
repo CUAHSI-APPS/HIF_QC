@@ -65,6 +65,11 @@ class ConfigParentView extends React.Component {
     //tests should be a list I suppose, of objects
 
     this.testTypes = [
+      {'Type': 'Missing Value Test', 'Parameters':[
+        {'Name': 'Missing Value Alias', "Data Type": 'Float'},
+        {'Name': 'Time Step', 'Data Type': 'Integer'},
+        {'Name': 'Time Step Resolution', 'Data Type': 'Time Resolution', 'Options':['minutes', 'hours', 'days', 'weeks']}
+      ]},
       {'Type':'Basic Outlier Test',
         'Parameters':[
           {'Name':'Max', 'Data Type':'Float', 'Default Value': 10, 'Required': true},
@@ -84,11 +89,6 @@ class ConfigParentView extends React.Component {
         {'Name': 'Training Set', 'Data Type': 'TimeSeries'}, //column name
         {'Name': 'Percentage Training Data', 'Data Type' : 'Integer'},
         {'Name': 'Percentage Test Data', 'Data Type' : 'Integer'}
-      ]},
-      {'Type': 'Missing Value Test', 'Parameters':[
-        {'Name': 'Missing Value Alias', "Data Type": 'Float'},
-        {'Name': 'Time Step', 'Data Type': 'Integer'},
-        {'Name': 'Time Step Resolution', 'Data Type': 'Time Resolution', 'Options':['minutes', 'hours', 'days', 'weeks']}
       ]}
     ]
   }
