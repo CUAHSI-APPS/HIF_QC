@@ -2,7 +2,7 @@ import json
 
 
 class Flag:
-    def __init__(self, config='../SessionFiles/Flagging_Config.json'):
+    def __init__(self, config='/SessionFiles/Flagging_Config.json'):
         self.config = config
         self.flagCodes = self.fetchFlagConfig();
 
@@ -15,8 +15,18 @@ class Flag:
 
         return flagCodes;
 
+    def returnAllFlagsAsArr(self):
+        flags = []
+        for flag in self.flagCodes.keys():
+            flags.append({"key": flag, "code":self.flagCodes[flag]})
+
+        return flags
+
     def returnGoodFlag(self):
         return self.flagCodes['None']
+
+    def returnFlag(self, flagName):
+        return self.flagCodes[flagName]
 
     def flag(self, failed, test):
         if(not failed):

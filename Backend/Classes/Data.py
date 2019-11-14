@@ -16,6 +16,8 @@ class DataManager():
 
     def __init__(self, redis):
         self.redis = redis
+        # store important locations
+        self.redis.set('session_files', '/SessionFiles/')
 
     #in case file location becomes more complicated
     def retrieveFileLoc(self, sessionId):

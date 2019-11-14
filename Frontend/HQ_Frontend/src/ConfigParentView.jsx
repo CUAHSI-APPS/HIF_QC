@@ -86,9 +86,11 @@ class ConfigParentView extends React.Component {
         {'Name': 'Percentage Test Data', 'Data Type' : 'Integer'}
       ]},
       {'Type': 'Missing Value Test', 'Parameters':[
-        {'Name': 'Missing Value Alias (Optional)', "Data Type": 'Float'}
+        {'Name': 'Missing Value Alias', "Data Type": 'Float'},
+        {'Name': 'Time Step', 'Data Type': 'Integer'},
+        {'Name': 'Time Step Resolution', 'Data Type': 'Time Resolution', 'Options':['minutes', 'hours', 'days', 'weeks']}
       ]}
-    ];
+    ]
   }
 
   //pulls computed metadata from statistics service
@@ -283,12 +285,12 @@ class ConfigParentView extends React.Component {
         testedCols.push(key);
       }
 
+      console.log(testedCols);
+
      sessionStorage.setItem('testedCols', JSON.stringify(testedCols));
 
      //add time index to our service
      this.allTests['timeIndex'] = sessionStorage.getItem('indexCol');
-
-     console.log(this.allTests);
 
      fetch(endpoint, {
         method: 'POST',

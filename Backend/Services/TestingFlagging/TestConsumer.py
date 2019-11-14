@@ -4,6 +4,7 @@ from json import loads
 from redis import Redis
 from Backend.Classes.Testing import *
 from Backend.Classes.Data import *
+import math
 import time, sys, traceback
 
 class TestConusmer():
@@ -12,6 +13,7 @@ class TestConusmer():
         self.redis = Redis(host='redis', port=6379)
         self.DM = DataManager(self.redis)
         self.flag = Flag()
+        self.liveIndex = None
 
     def combineFlagCols(self, s1, s2):
         goodFlag = self.flag.returnGoodFlag()
@@ -19,6 +21,8 @@ class TestConusmer():
             if s1[col] == '-':
                 s1[col] = s2[col]
             elif s1[col] == goodFlag and s2[col] != goodFlag:
+                s1[col] = s2[col]
+            elif type(s1[col]) is type(0.0) and math.isnan(s1[col]):
                 s1[col] = s2[col]
         return s1
 
@@ -38,7 +42,9 @@ class TestConusmer():
 
                 print(self.redis.get(tests['sessionId']).decode('utf-8'))
                 df = pd.read_csv(self.redis.get(tests['sessionId']).decode('utf-8'))
-
+                df[timeIndex] = pd.to_datetime(df[timeIndex])
+                df = df.set_index(timeIndex)
+                self.liveIndex = df.index
 
                 outdf = pd.DataFrame()
 
@@ -65,16 +71,19 @@ class TestConusmer():
                                 testrunner = SpatialInconsistencyTest(3, **test)
                                 flags = testrunner.runTest(df)
 
-                            # elif test['Type'] == 'Missing Value Test':
-                            #     # run missingvaltest by default
-                            #     print("MissingValTest")
-                            #     # testrunner = MissingValTest(4, **test)
-                            #     # flags = testrunner.runTest(df)
+                            elif test['Type'] == 'Missing Value Test':
+                                # run missingvaltest by default
+                                testrunner = MissingValTest(4, **test)
+                                flags, self.liveIndex = testrunner.runTest(df)
 
-
+                            print(outdf, flags, flush=True)
+                            outdf = outdf.reindex(self.liveIndex)
+                            flags = flags.reindex(self.liveIndex)
                             if flags.name+"_flags" not in outdf.columns:
+                                # rebase here for alignment if mvt has been run
                                 outdf[flags.name+"_flags"] = flags
                             else:
+                                # rebase here for alignment if
                                 outdf[flags.name+"_flags"] = self.combineFlagCols(outdf[flags.name+"_flags"], flags)
 
 
@@ -88,7 +97,8 @@ class TestConusmer():
 
 
                 # set datetime as the index of our flags
-                outdf[timeIndex] = pd.to_datetime(df[timeIndex])
+                outdf[timeIndex] = self.liveIndex
+
                 outdf = outdf.set_index(timeIndex)
 
 

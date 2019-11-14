@@ -121,11 +121,12 @@ class AddTestModal extends React.Component {
     }
   }
 
+
   /* Function that manages the output of the correct tags for the data type
   of a particular parameter. Ultimiately will include error checking.
   */
   handleRenderDifferentParamInputs(parameter){
-   let otherColumns;
+   let otherColumns, options;
 
    switch(parameter['Data Type']){
       case 'TimeSeries':
@@ -136,9 +137,9 @@ class AddTestModal extends React.Component {
           if(dataStream !== this.props.selectedDS){
                if(first){
                  first = false;
-                 for(let parameter in this.props.testJSON['Parameters']){
-                   if(this.props.testJSON['Parameters'][parameter]['Name'] === "Comparision Data"){
-                     this.props.testJSON['Parameters'][parameter]['Value'] = dataStream;
+                 for(let p in this.props.testJSON['Parameters']){
+                   if(this.props.testJSON['Parameters'][p]['Name'] === parameter['Name']){
+                     this.props.testJSON['Parameters'][p]['Value'] = dataStream;
                    }
                  }
                  return <option key={uuidv4()} select="selected">{dataStream}</option>
@@ -151,8 +152,29 @@ class AddTestModal extends React.Component {
         return(<select key={uuidv4()} className="form-control" parameter-name={parameter['Name']} onChange={this.handleValueInput}>{otherColumns}</select>)
         break;
 
+      case 'Time Resolution':
+        first = true;
+        options = parameter['Options'].map( (option) => {
+
+          if(first){
+            first = false;
+            for(let p in this.props.testJSON['Parameters']){
+              if(this.props.testJSON['Parameters'][p]['Name'] === parameter['Name']){
+                this.props.testJSON['Parameters'][p]['Value'] = option;
+              }
+            }
+            return <option key={uuidv4()} select="selected">{option}</option>
+          } else{
+            return <option key={uuidv4()}>{option}</option>
+          }
+
+        })
+
+        return(<select key={uuidv4()} className="form-control" parameter-name={parameter['Name']} onChange={this.handleValueInput}>{options}</select>)
+        break;
+
       default:
-        return(<input key={uuidv4()} className="form-control" parameter-name={parameter['Name']} placeholder="0" onChange={this.handleValueInput}/>)
+        return(<input key={uuidv4()} className="form-control" parameter-name={parameter['Name']} placeholder="-" onChange={this.handleValueInput}/>)
         break;
    }
 

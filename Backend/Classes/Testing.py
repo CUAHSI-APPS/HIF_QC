@@ -1,6 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from Backend.Classes.Flagging import Flag
 import numpy as np
+import pandas as pd
+from datetime import timedelta
 
 '''
       {'Type':'Basic Outlier Test',
@@ -17,11 +19,16 @@ import numpy as np
         {'Name':'Comparision Data', 'Data Type': 'TimeSeries'}, //column name from the same file
         {'Name':'Difference Threshold (%)', 'Data Type': 'Integer'}  //user will be able to select a different column
                                                           //from thier dataset
-      ] },
+      ]},
       {'Type': 'Machine Learning', 'Parameters':[
         {'Name': 'Training Set', 'Data Type': 'TimeSeries'}, //column name
         {'Name': 'Percentage Training Data', 'Data Type' : 'Integer'},
         {'Name': 'Percentage Test Data', 'Data Type' : 'Integer'}
+      ]}
+      {'Type': 'Missing Value Test', 'Parameters':[
+        {'Name': 'Missing Value Alias', "Data Type": 'Float'},
+        {'Name': 'Time Step', 'Data Type': 'Integer'},
+        {'Name': 'Time Step Resolution', 'Data Type': 'Time Resolution', 'Options':['minutes', 'hours', 'days', 'weeks']}
       ]}
 '''
 
@@ -50,14 +57,43 @@ class MissingValTest(Test):
             self.id = testId
             self.column = kwargs["Column"]
             self.testName = kwargs["Type"]
+            self.isAlias = False
+
+            for parameter in kwargs["Parameters"]:
+                if parameter['Name'] == 'Missing Value Alias':
+                    if 'Value' in parameter and parameter['Value'] is not '':
+                        self.mva = parameter['Value']
+                        self.isAlias = True
+                        break
+                elif parameter['Name'] == 'Time Step':
+                    if 'Value' in parameter:
+                        self.step = parameter['Value']
+                elif parameter['Name'] == 'Time Step Resolution':
+                    self.tsr = parameter['Value']
+
+            if self.isAlias is False:
+                if self.tsr == 'minutes':
+                    self.timeStep = pd.Timedelta(minutes=int(self.step))
+                elif self.tsr == 'hours':
+                    self.timeStep = pd.Timedelta(hours=int(self.step))
+                elif self.tsr == 'days':
+                    self.timeStep = pd.Timedelta(days=int(self.step))
+                elif self.tsr == 'weeks':
+                    self.timeStep = pd.Timedelta(weeks=int(self.step))
+
 
 
         # data must be a float list
         # returns a set of boolean flags
         def runTest (self, dataframe):
             # needs flagging
-            outdf = dataframe.isna()[self.column]
-            return outdf.apply(lambda x: self.flag.flag(x, self.testName))
+            if self.isAlias:
+                outdf = np.invert(dataframe[self.column] == float(self.mva))
+                return outdf.apply(lambda x: self.flag.flag(x, self.testName)), dataframe.index
+
+            dataframe = dataframe.reindex(pd.date_range(start=dataframe.index[0], end=dataframe.index[-1], freq=self.timeStep))
+            outdf = dataframe.notna()[self.column]
+            return outdf.apply(lambda x: self.flag.flag(x, self.testName)), dataframe.index
 
 class RangeTest(Test):
     def __init__ (self, testId = 1, **kwargs):

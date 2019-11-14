@@ -23,7 +23,7 @@ window.NextProgressBar = function(NextStep) {
 
         if(NextStep === 5){
           console.log(JSON.parse(sessionStorage.testedCols)[0]);
-          let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.testedCols)[0])}`
+          let endpoint = `/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.testedCols)[0])}&indexCol=${encodeURIComponent(sessionStorage.indexCol)}`
           $('#StepPlaceholder').load(endpoint);
 
           //load current column in sessionStorage
@@ -61,7 +61,7 @@ function PreviousProgressBar(PreviousStep) {
     }
 
     if(NextStep === 5){
-      $('#StepPlaceholder').load(`/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(sessionStorage.dataCols[0])}`);
+      $('#StepPlaceholder').load(`/view/flagReview/${sessionStorage.sessionId}?colName=${encodeURIComponent(JSON.parse(sessionStorage.testedCols)[0])}&indexCol=${encodeURIComponent(sessionStorage.indexCol)}`);
     }
     else{
       $('#StepPlaceholder').load("/view/SetStep/Step_" + PreviousStep, function(){

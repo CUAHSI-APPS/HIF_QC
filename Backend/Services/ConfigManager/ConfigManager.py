@@ -16,9 +16,7 @@ def index():
 	# Try
 	try:
 		testconfig = TestConfiguration("../config/tests.config")
-		
-		print(testconfig.TestParameters)
-		
+
 		return("working")
 
 	# Except

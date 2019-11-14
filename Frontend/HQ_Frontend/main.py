@@ -50,6 +50,7 @@ def FetchFlagReview(sessionId):
     VB = VisBuilder();
     # get the name of our current time series column
     col = request.args.get('colName')
+    indx = request.args.get('indexCol')
     # get flags
     fp = redis.get(sessionId+'outputcsv')
     flags = dataManager.getOutputAsDf(sessionId, fp)
@@ -61,15 +62,24 @@ def FetchFlagReview(sessionId):
 
 
     flagobjs = []
-    for i, flag in enumerate(singleSeries):
+    i = 0
+    while i < len(singleSeries)-1:
         obj = {}
-        obj['code'] = flag
-        obj['datetime'] = indexCol[i]
+        bgn = indexCol[i]
+        while i < len(singleSeries)-1 and singleSeries[i] is singleSeries[i+1]:
+            i+=1
+
+        obj['code'] = singleSeries[i]
+        obj['datetime'] = bgn
+
         flagobjs.append(obj)
+        i += 1
 
     # build visualization
     fileName = dataManager.retrieveFileLoc(sessionId)
-    dataCol = dataManager.retrieveOnlyDataCols(fileName, [col], None)[col]
+    tmpCol = dataManager.retrieveOnlyDataCols(fileName, [col], indexName=indx)
+    dataCol = tmpCol.reindex(flags.index)[col]
+
 
     script, div = VB.BuildLineChart(indexCol, dataCol, singleSeries)
 
