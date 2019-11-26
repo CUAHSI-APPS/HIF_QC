@@ -4,11 +4,183 @@ import numpy as np
 import builtins
 import traceback
 import sys
+import math
 from datetime import datetime
 from dateutil.parser import parse
+from inspect import getsource
+
+supress = True
 
 
 
+
+class Value():
+    def __init__(self, valueNdx, context, currentValue, scalar=True):
+        self._valueIndex = valueNdx
+        self._context = context
+        self.value = currentValue
+        self._scalar = scalar
+
+
+    def isnan(self):
+        return math.isnan(self.value)
+
+    def prior(self, num):
+        if (self._valueIndex - num) < 0:
+            sublist = np.empty([0])
+            if not supress:
+                print("Warning: Value.prior() specified number out of bounds, empty array returned.")
+        else:
+            sublist = self._context[self._valueIndex-num:self._valueIndex]
+        return Value(self._valueIndex, sublist, self.value, False)
+
+
+    """
+    Overloaded Operators
+    """
+    def __contains__(self, key):
+        pass
+
+    def __gt__(self, other):
+
+        if type(self) is type(other):
+            return self._comparisionOrganizer(other, ">")
+        else:
+            if type(other) is type(float()):
+                return self.value > other
+            elif type(other) is type(int()):
+                return self.value > other
+        pass
+
+    def __ge__(self, other):
+        if type(self) is type(other):
+            return self._comparisionOrganizer(other, ">=")
+        else:
+            if type(other) is type(float()):
+                return self.value >= other
+            elif type(other) is type(int()):
+                return self.value >= other
+        pass
+
+    def __lt__(self, other):
+        if type(self) is type(other):
+            return self._comparisionOrganizer(other, "<")
+        else:
+            if type(other) is type(float()):
+                return self.value < other
+            elif type(other) is type(int()):
+                return self.value < other
+
+    def __le__(self, other):
+        if type(self) is type(other):
+            return self._comparisionOrganizer(other, "<=")
+        else:
+            if type(other) is type(float()):
+                return self.value <= other
+            elif type(other) is type(int()):
+                return self.value <= other
+
+    def __ne__(self, other):
+        if type(self) is type(other):
+            return self._comparisionOrganizer(other, "!=")
+        else:
+            if type(other) is type(float()):
+                return self.value != other
+            elif type(other) is type(int()):
+                return self.value != other
+
+    def __eq__(self, other):
+        if type(self) is type(other):
+            return self._comparisionOrganizer(other, "==")
+        else:
+            if type(other) is type(float()):
+                return self.value == other
+            elif type(other) is type(int()):
+                return self.value == other
+
+    def __str__(self):
+        if self._scalar is True:
+            return str(self.value)
+        else:
+            return np.array2string(self._context)
+
+    """
+----Private functions------------
+    """
+    def _comparisionOrganizer(self, other, cmp):
+        if self._scalar is True and other._scalar is True:
+            return self._scalarCmp(self.value, other.value, cmp)
+        elif self._scalar is True and other._scalar is False:
+            return self._scalarListCmp(self.value, other._context, cmp)
+        elif self._scalar is False and other._scalar is True:
+            return self._scalarListCmp(other.value, self._context, cmp)
+        else:
+            return self._listListCmp(other.value, self._context, cmp)
+
+    def _scalarCmp(self, s1, s2, cmp):
+        if cmp is "==":
+            return s1 == s2
+        if cmp is "<":
+            return s1 < s2
+        if cmp is ">":
+            return s1 > s2
+        if cmp is ">=":
+            return s1 >= s2
+        if cmp is "<=":
+            return s1 <= s2
+        if cmp is "!=":
+            return s1 != s2
+        pass
+
+    """
+    Function: _scalarListCmp
+    Desc: Performs pairwise compairisions of l1 against s1. If any pair fails this
+        comparision then the entire function returns false. Otherwise it returns true.
+        Generally we want to flag when function returns true.
+    """
+    def _scalarListCmp(self, s1, l1, cmp):
+        if l1.size is 0:
+            return False
+        elif cmp == "==":
+            for val in l1:
+                if s1 != val:
+                    return False
+            return True
+        elif cmp == "<":
+            for val in l1:
+                if s1 >= val:
+                    return False
+            return True
+        elif cmp == ">":
+            for val in l1:
+                if s1 <= val:
+                    return False
+            return True
+        elif cmp == ">=":
+            for val in l1:
+                if s1 < val:
+                    return False
+            return True
+        elif cmp == "<=":
+            for val in l1:
+                if s1 > val:
+                    return False
+            return True
+        elif cmp == "!=":
+            for val in l1:
+                if s1 == val:
+                    return False
+            return True
+
+    def _listListCmp(self, l1, l2, cmp):
+        if cmp is "==":
+            if l1 is l2:
+                return True
+            for val_a in l1:
+                for val_b in l2:
+                    if val_a is not val_b:
+                        return False
+            return True
 
 
 
@@ -25,7 +197,7 @@ Name: TimeSeries
 Description: Core data structure. Contains one vector and one TimeSeries.
 '''
 class TimeSeries():
-    def __init__(self, values=None, index=None, timedelta=None, dtype=None):
+    def __init__(self, values=None, index=None, timedelta=None, dtype=None, flagConf=None):
         # check for valid input index
         self._index = np.array(index, dtype='datetime64')
         self._timedelta = None
@@ -33,7 +205,10 @@ class TimeSeries():
         # check for valid datatypes
         # throw error if datatype does not match value
         self._values = np.array(values, dtype= 'f8' if (dtype is None) else dtype)
+        self._flags = np.array(values, dtype='object')
+        self._flagconf = flagConf
 
+        self._state = {}
 
     """
 ---- Fluent Syntax Methods ----------------------
@@ -42,26 +217,41 @@ class TimeSeries():
         return self
 
     def flag(self, arg):
-        print(arg)
+        if self._flagconf is None:
+            raise Exception("\nError: No flag codes were defined. Please define a flag code dict with DataSet.flagcodes().are().")
+        elif arg not in self._flagconf.keys():
+            raise Exception("\nError: Flag code key not found in dataset flag codes. Please ensure that '" + arg + "' exists in dataset flag codes.")
+        self._state['flagKey'] = arg
+        return self
+
+    def flaggedData(self):
         return self
 
     def when(self, funct):
-        print(funct)
+        print(getsource(funct))
+        for i, v in enumerate(self._values):
+
+            val = Value(i, self._values, v)
+
+            ret = funct(val)
+
+            if ret is None:
+                ret = False
+
         return self
 
-    def timestep(self, timestep):
-        print(timestep)
+    def timestep(self, ts):
+        self._timedelta = ts
         return self
 
     """
 ---- Sugar Functions ------------------------
     """
-    def beginning(self):
-        return 0
+    def beginning(self, offset=0):
+        return self._index[0 + offset]
 
     def end(self):
-        return len(self._index)-1
-
+        return self._index[len(self._index)-1]
 
 
 
@@ -98,6 +288,7 @@ class Dataset():
         self._addtlCols = None
         self._ndxMap = []   #array of tuples mapping global indexes to local indexes
         self._flagCols = None
+        self._flagCodes = None
 
         self._index = None #index itself
         self._indexCol = None #col number
@@ -178,11 +369,11 @@ class Dataset():
 ----- Fluent Syntax Methods --------------------
     '''
 
-    def flags(self):
+    def flagcodes(self):
         return self
 
     def are(self, flag_configs):
-        print("")
+        self._flagCodes = flag_configs
         return self
 
     '''
@@ -277,7 +468,7 @@ class Dataset():
             globalNdx = self._getGlobalColumnFromName(arg)
             vals = self._getLocalColumn(globalNdx)
             # construct new time series
-            return TimeSeries(values=vals, index=self._index, dtype=type(vals[0]))
+            return TimeSeries(values=vals, index=self._index, dtype=type(vals[0]), flagConf=self._flagCodes)
 
 
 
