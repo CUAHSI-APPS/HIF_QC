@@ -207,6 +207,7 @@ class TimeSeries():
         self._values = np.array(values, dtype= 'f8' if (dtype is None) else dtype)
         self._flags = np.array(values, dtype='object')
         self._flagconf = flagConf
+        self._testHist = np.array([], dtype='object')
 
         self._state = {}
 
@@ -228,7 +229,9 @@ class TimeSeries():
         return self
 
     def when(self, funct):
-        print(getsource(funct))
+        # this is important for provenance
+        self._testHist = np.append(self._testHist, np.array([(self._state['flagKey'], getsource(funct))], dtype=[('test', 'U100'), ('testDef', 'U10000')]))
+
         for i, v in enumerate(self._values):
 
             val = Value(i, self._values, v)
@@ -243,6 +246,9 @@ class TimeSeries():
     def timestep(self, ts):
         self._timedelta = ts
         return self
+
+    def testHistory(self):
+        return self._testHist
 
     """
 ---- Sugar Functions ------------------------
