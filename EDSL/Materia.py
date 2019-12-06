@@ -5,10 +5,12 @@ import builtins
 import traceback
 import sys
 import math
+import pandas as pd
 from datetime import datetime
 from dateutil.parser import parse
 from inspect import getsource, getargspec
 from copy import deepcopy
+
 
 supress = True
 
@@ -16,12 +18,13 @@ supress = True
 
 
 class Value():
-    def __init__(self, valueNdx=None, context=None, currentValue=None, dt=None, scalar=True):
+    def __init__(self, valueNdx=None, context=None, currentValue=None, dt=None, scalar=True, timestep=None):
         self._valueIndex = valueNdx
         self._dt = dt
         self._context = context
         self.value = currentValue
         self._scalar = scalar
+        self._timedelta = timestep
 
 
     def isnan(self):
@@ -43,7 +46,7 @@ class Value():
                 print("Warning: Value.prior() specified number out of bounds, empty array returned.")
         else:
             sublist = self._context[self._valueIndex-num:self._valueIndex]
-        return Value(self._valueIndex-num, sublist, self.value, self._dt, False)
+        return Value(self._valueIndex-num, sublist, self.value, self._dt, False, timestep=self._timedelta)
 
 
     """
@@ -53,7 +56,7 @@ class Value():
         if type(key) is type(0) and self._scalar is False:
             if len(self._context) <= key:
                 return self
-            return Value(self._valueIndex + key, self._context, self._context[key], self._dt, True)
+            return Value(self._valueIndex + key, self._context, self._context[key], self._dt, True, timestep=self._timedelta)
 
     def __contains__(self, key):
         pass
@@ -365,6 +368,11 @@ class Flag():
         else:
             self._codes.append(code)
 
+    def isFlag(self, flag):
+        if flag in self._codes:
+            return True
+        return False
+
     def notNone(self):
         if self._noneCode in self._codes:
             return False
@@ -380,10 +388,11 @@ Name: TimeSeries
 Description: Core data structure. Contains one vector and one TimeSeries.
 '''
 class TimeSeries():
-    def __init__(self, values=None, index=None, timedelta=None, dtype=None, flagConf=None):
+    def __init__(self, values=None, index=None, timedelta=None, dtype=None, flagConf=None, flags=None):
         # check for valid input index
         self._index = np.array(index, dtype='datetime64')
         self._timedelta = None
+        self._dtype = dtype
 
         # check for valid datatypes
         # throw error if datatype does not match value
@@ -393,6 +402,57 @@ class TimeSeries():
         self._testHist = np.array([], dtype='object')
 
         self._state = {}
+
+    '''
+--- Built In Test Methods ------------------------
+    '''
+
+    def reindex(self, timedelta):
+        tmp = pd.DataFrame({'dtindex':self._index, 'values': self._values, 'flags':self._flags}, columns=['dtindex','values','flags'])
+        td = pd.Timedelta(timedelta)
+
+        tmp = tmp.set_index('dtindex')
+
+        tmp = tmp.reindex(pd.date_range(start=tmp.index[0], end=tmp.index[-1], freq=td))
+
+        self._index = tmp.index.to_numpy()
+        self._values = tmp['values'].to_numpy()
+        self._flags = tmp['flags'].to_numpy()
+
+
+
+
+    def missingValueTest(self, mvAlias=None):
+
+        if self._timedelta is None:
+            raise Exception(
+            '''
+Error: Cannot test for missing values without defining series timestep length.
+Please specify series timestep with <TimeSeries>.timestep().
+            '''
+            )
+
+        tmp = pd.DataFrame({'dtindex':self._index, 'values': self._values, 'flags':self._flags}, columns=['dtindex','values','flags'])
+        td = pd.Timedelta(self._timedelta)
+
+        tmp = tmp.set_index('dtindex')
+
+        tmp = tmp.reindex(pd.date_range(start=tmp.index[0], end=tmp.index[-1], freq=td))
+
+        self._index = tmp.index.to_numpy()
+        self._values = tmp['values'].to_numpy()
+        self._flags = tmp['flags'].to_numpy()
+
+        missingvals = np.argwhere(np.isnan(self._values))
+
+        if mvAlias is not None:
+            missingvals = np.append(missingvals, np.where(self._values == mvAlias))
+
+        for i in missingvals:
+            self._flags[i] = Flag(self._flagconf[self._state['flagKey']], self._flagconf['None'])
+
+
+        return
 
     """
 ---- Fluent Syntax Methods ----------------------
@@ -426,7 +486,7 @@ class TimeSeries():
 
         for i, v in enumerate(self._values):
 
-            val = Value(i, self._values, v, self._index[i])
+            val = Value(i, self._values, v, self._index[i], timestep=self._timedelta)
 
             # switch for additional arguments
             if iter:
@@ -456,7 +516,6 @@ class TimeSeries():
         return self._testHist
 
 
-
     """
 ---- Sugar Functions ------------------------
     """
@@ -471,10 +530,11 @@ class TimeSeries():
 
     def at(self, arg):
         # reindex if necessary
-
+        if len(self._values) != len(arg._context):
+            self.reindex(arg._timedelta)
 
         if type(arg) is type(Value()):
-            return Value(arg._valueIndex, self._values, self._values[arg._valueIndex], arg._dt)
+            return Value(arg._valueIndex, self._values, self._values[arg._valueIndex], arg._dt, timestep=self._timedelta)
 
         # allow for index or timestamp
 
@@ -591,15 +651,16 @@ class Dataset():
             else:
                 self._index = None
 
-    '''
----- Methods ---------------------------------
-    '''
-    def MissingValuesTest(mvAlias=None):
-        pass
 
     '''
 ----- Fluent Syntax Methods --------------------
     '''
+
+    def getFlagCodes(self):
+        return self._flagCodes
+
+    def getFlagCode(self, key):
+        return self._flagCodes[key]
 
     def flagcodes(self):
         return self
