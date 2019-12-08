@@ -8,8 +8,6 @@ DS.genHeadersFromMetadataRows((1,6))
 
 DS.flagcodes().are({"None":"OK", "Repeat Value":"Repeat Value", "Missing Value": "Missing", "Outlier": "Exceeds Range", "Spatial Inconsistency": "Incosistent (Spatial)", "Logical Inconsistency": "Inconsistent (Logical)", "Spike": "Spike"})
 
-
-
 series_max = DS['Air temperature (2-meter) monitor_Maximum']
 series_min = DS['Air temperature (2-meter) monitor_Minimum']
 series_max_10 = DS['Air temperature (10-meter) monitor_Maximum']
@@ -87,18 +85,24 @@ def slope_test(value, i):
 
 
 series_max.datapoint().flag('Missing Value').missingValueTest(-9999)
+
 series_max.datapoint().flag("Repeat Value").when(rv_test)
+
 series_max.datapoint().flag("Outlier").when(range_test)
+
 series_max.datapoint().flag("Spatial Inconsistency").when(spatial_inconsistency)
+
 series_max.datapoint().flag("Logical Inconsistency").when(logical_inconsistency)
+
 series_max.datapoint().flag("Spike").when(slope_test)
 
-series_min.datapoint().flag('Missing Value').missingValueTest(-9999)
-series_min.datapoint().flag("Repeat Value").when(rv_test)
-series_min.datapoint().flag("Outlier").when(range_test)
-series_min.datapoint().flag("Spatial Inconsistency").when(spatial_inconsistency)
-series_min.datapoint().flag("Logical Inconsistency").when(logical_inconsistency_min)
-series_min.datapoint().flag("Spike").when(slope_test)
+
+# series_min.datapoint().flag('Missing Value').missingValueTest(-9999)
+# series_min.datapoint().flag("Repeat Value").when(rv_test)
+# series_min.datapoint().flag("Outlier").when(range_test)
+# series_min.datapoint().flag("Spatial Inconsistency").when(spatial_inconsistency)
+# series_min.datapoint().flag("Logical Inconsistency").when(logical_inconsistency_min)
+# series_min.datapoint().flag("Spike").when(slope_test)
 
 
 
