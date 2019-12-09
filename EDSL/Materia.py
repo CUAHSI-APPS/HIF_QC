@@ -388,11 +388,12 @@ Name: TimeSeries
 Description: Core data structure. Contains one vector and one TimeSeries.
 '''
 class TimeSeries():
-    def __init__(self, values=None, index=None, timedelta=None, dtype=None, flagConf=None, flags=None):
+    def __init__(self, values=None, index=None, timedelta=None, dtype=None, flagConf=None, flags=None, header=None):
         # check for valid input index
         self._index = np.array(index, dtype='datetime64')
         self._timedelta = None
         self._dtype = dtype
+        self._header = header
 
         # check for valid datatypes
         # throw error if datatype does not match value
@@ -402,6 +403,9 @@ class TimeSeries():
         self._testHist = np.array([], dtype='object')
 
         self._state = {}
+
+
+
 
     '''
 --- Built In Test Methods ------------------------
@@ -457,6 +461,9 @@ Please specify series timestep with <TimeSeries>.timestep().
     """
 ---- Fluent Syntax Methods ----------------------
     """
+
+
+
     def datapoint(self):
         return self
 
@@ -770,7 +777,7 @@ Warning: Default flag code undefined.
             globalNdx = self._getGlobalColumnFromName(arg)
             vals = self._getLocalColumn(globalNdx)
             # construct new time series
-            return TimeSeries(values=vals, index=self._index, dtype=type(vals[0]), flagConf=self._flagCodes)
+            return TimeSeries(values=vals, index=self._index, dtype=type(vals[0]), flagConf=self._flagCodes, header=arg)
 
 
 

@@ -127,7 +127,7 @@ for i in range(10):
 
     timedeltas.append(end-start)
 
-    print("\n Outlier Inconsistency ---------------------")
+    print("\n Outlier ---------------------")
     start = time.time()
     series_avg_2.datapoint().flag("Outlier").when(range_test)
     end = time.time()
