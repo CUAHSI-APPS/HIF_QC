@@ -60,4 +60,6 @@ class VisBuilder():
                     badbox = BoxAnnotation(left=badrng_st, right=badrng_end, fill_alpha=0.2, fill_color=color)
                 p.add_layout(badbox)
 
+
+
         return components(p)
