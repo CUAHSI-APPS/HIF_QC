@@ -76,7 +76,8 @@ class TestConusmer():
                                 testrunner = MissingValTest(4, **test)
                                 flags, self.liveIndex = testrunner.runTest(df)
 
-                            print(outdf, flags, flush=True)
+
+                            print(len(col), len(flags), flush=True)
                             outdf = outdf.reindex(self.liveIndex)
                             flags = flags.reindex(self.liveIndex)
                             if flags.name+"_flags" not in outdf.columns:
