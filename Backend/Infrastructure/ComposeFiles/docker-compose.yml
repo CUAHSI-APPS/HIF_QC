@@ -1,6 +1,13 @@
 version: '2.1'
 
 services:
+  cleanup:
+      build:
+        context: ../../
+        dockerfile: Infrastructure/Dockerfiles/Cleanup
+      container_name: Cleanup
+      volumes:
+        - ../../SessionFiles/:/SessionFiles
   hq-frontend:
     build:
       context: ../../../

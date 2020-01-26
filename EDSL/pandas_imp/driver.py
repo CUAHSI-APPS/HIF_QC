@@ -25,7 +25,7 @@ df = pd.read_csv('rockland.csv')
 df['Time Stamp ((UTC-08:00) Pacific Time (US & Canada))'] = pd.to_datetime(df['Time Stamp ((UTC-08:00) Pacific Time (US & Canada))'])
 
 
-for i in range(0,8):
+for i in range(0,3):
 
     timedeltas = []
 
@@ -59,7 +59,6 @@ for i in range(0,8):
     testspec['Parameters'].append({'Name':'Min', 'Data Type': 'Float', 'Value': -20})
     testspec['Column'] = 'TC_C_2_Avg degC Average'
 
-
     rt = RangeTest(1, **testspec)
 
 
@@ -83,8 +82,6 @@ for i in range(0,8):
     start = time.time()
     sit = SpatialInconsistencyTest(2, **testspec)
     end = time.time()
-
-
 
     print("\n Spatial Inconsistency Test ---------------------")
 
