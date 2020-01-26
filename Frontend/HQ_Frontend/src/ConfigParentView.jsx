@@ -66,31 +66,40 @@ class ConfigParentView extends React.Component {
     //tests should be a list I suppose, of objects
 
     this.testTypes = [
-      {'Type': 'Missing Value Test', 'Parameters':[
-        {'Name': 'Missing Value Alias', "Data Type": 'Float'},
-        {'Name': 'Time Step', 'Data Type': 'Integer'},
-        {'Name': 'Time Step Resolution', 'Data Type': 'Time Resolution', 'Options':['minutes', 'hours', 'days', 'weeks']}
-      ]},
-      {'Type':'Basic Outlier Test',
+      {'Type': 'Missing Value Test',
+        'Instructions': 'Please input either a missing value alias OR a time step to check your values against. For example, if your data already has -9999 as value expressing a "missing value" please input it here.',
         'Parameters':[
-          {'Name':'Max', 'Data Type':'Float', 'Default Value': 10, 'Required': true},
-          {'Name':'Min', 'Data Type':'Float'}
+          {'Name': 'Missing Value Alias', "Data Type": 'Float'},
+          {'Name': 'Time Step', 'Data Type': 'Integer'},
+          {'Name': 'Time Step Resolution', 'Data Type': 'Time Resolution', 'Options':['minutes', 'hours', 'days', 'weeks']}
+        ]
+      },
+      {'Type':'Basic Outlier Test',
+        'Instructions': 'Please input two, non-inclusive, decimal values to act as outlier thresholds.',
+        'Parameters':[
+          {'Name':'Min', 'Data Type':'Float', 'Required': true},
+          {'Name':'Max', 'Data Type':'Float', 'Default Value': 10, 'Required': true}
         ],
         'Validation Reqs': ['"Max" > "Min"'],
         'Output': 'null'},
-      {'Type':'Repeat Value Test', 'Parameters':[
-        {'Name': 'Repeating Threshold', 'Data Type': 'Integer'}
-      ]},
-      {'Type':'Spatial Inconsistency', 'Parameters':[
-        {'Name':'Comparision Data', 'Data Type': 'TimeSeries'}, //column name from the same file
-        {'Name':'Difference Threshold (%)', 'Data Type': 'Integer'}  //user will be able to select a different column
-                                                          //from thier dataset
-      ] },
-      {'Type': 'Machine Learning', 'Parameters':[
-        {'Name': 'Training Set', 'Data Type': 'TimeSeries'}, //column name
-        {'Name': 'Percentage Training Data', 'Data Type' : 'Integer'},
-        {'Name': 'Percentage Test Data', 'Data Type' : 'Integer'}
-      ]}
+      {'Type':'Repeat Value Test',
+        'Instructions': 'Please input a single interger. A data point will be flagged when a value repeats n times in a row, where n is the integer input.',
+        'Parameters':[
+          {'Name': 'Repeating Threshold', 'Data Type': 'Integer', 'Required': true}
+        ]
+      },
+      {'Type':'Spatial Inconsistency',
+        'Instructions': 'Please select another data column from your data set and input an integer between 0 and 100. The selected data set should be collected from a sensor located very to this current data column. A value will be flagged if the difference between two datapoints at the same timestamp exceeds your threshold.',
+        'Parameters':[
+          {'Name':'Comparision Data', 'Data Type': 'TimeSeries'},
+          {'Name':'Difference Threshold (%)', 'Data Type': 'Integer'}
+        ]
+      }
+      // {'Type': 'Machine Learning', 'Parameters':[
+      //   {'Name': 'Training Set', 'Data Type': 'TimeSeries'}, //column name
+      //   {'Name': 'Percentage Training Data', 'Data Type' : 'Integer'},
+      //   {'Name': 'Percentage Test Data', 'Data Type' : 'Integer'}
+      // ]}
     ]
   }
 

@@ -84,23 +84,29 @@ class MissingTimestampsTest(Test):
              self.precision = parameter['Value']
 
         self.timestep = np.timedelta64(self.time, self.precision)
+        self.timestep = pd.Timedelta(self.timestep)
 
     # data must be a float list
     # returns a set of boolean flags
     def runTest (self, dataframe):
-        newts = []
+        # newts = []
+        #
+        # for i, val in enumerate(dataframe[self.column]):
+        #     if i < len(dataframe[self.column])-1:
+        #         first = dataframe[self.column][i]
+        #         next = dataframe[self.column][i+1]
+        #         if (np.timedelta64(next-first) > self.timestep):
+        #             tempts = first + self.timestep
+        #             while not( tempts == next):
+        #                 newts.append(tempts)
+        #                 tempts = tempts + self.timestep
+        #
+        # return newts
 
-        for i, val in enumerate(dataframe[self.column]):
-            if i < len(dataframe[self.column])-1:
-                first = dataframe[self.column][i]
-                next = dataframe[self.column][i+1]
-                if (np.timedelta64(next-first) > self.timestep):
-                    tempts = first + self.timestep
-                    while not( tempts == next):
-                        newts.append(tempts)
-                        tempts = tempts + self.timestep
+        tmp = dataframe.set_index(self.column)
+        tmp = tmp.reindex(pd.date_range(start=tmp.index[0], end=tmp.index[-1], freq=self.timestep))
+        return tmp
 
-        return newts
         # return outdf.apply(lambda x: self.flag.flag(x, self.testName))
 
 class SpikeTest(Test):

@@ -1,0 +1,2 @@
+#Runs every saturday at 3AM
+0 3 * * SAT rm -f /SessionFiles/*.csv >> /var/log/cron.log 2>&1

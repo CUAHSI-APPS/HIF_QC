@@ -13,7 +13,8 @@ class AddTestModal extends React.Component {
     super(props);
 
     this.state = {subModalView:false,
-                  visualizedDataStreams:[]}
+                  visualizedDataStreams:[],
+                  invalidInput:true}
 
     //get columns from session storage
     this.colNames = JSON.parse(sessionStorage.getItem('dataCols'))
@@ -27,8 +28,19 @@ class AddTestModal extends React.Component {
     this.handleTestSelection = this.handleTestSelection.bind(this);
     this.handleRenderDifferentParamInputs = this.handleRenderDifferentParamInputs.bind(this);
     this.handleValueInput = this.handleValueInput.bind(this);
+    this.getInstructions = this.getInstructions.bind(this);
+    // this.validateInput = this.validateInput.bind(this);
   }
 
+  validateInput(parameter){
+      let localState = false;
+      for(let parameter in this.props.testJSON['Parameters']){
+        if(this.props.testJSON['Parameters'][parameter]['Required'] && (this.props.testJSON['Parameters'][parameter]['Value'] === '' || !isDefined(this.props.testJSON['Parameters'][parameter]['Value'])) ){
+          localState = true;
+        }
+      }
+      this.setState({invalidInput: localState});
+  }
 
   handleAddData(){
     //add all selected data stream except the current data stream (slice(1))
@@ -108,19 +120,41 @@ class AddTestModal extends React.Component {
        }
     }
 
+    //reset validity
+    this.setState({invalidInput:true});
+
     //rebuild json
     this.props.rebuildJSON(testInfo);
   }
 
   handleValueInput(e){
     let parameterName = e.target.getAttribute('parameter-name');
+
     for(let parameter in this.props.testJSON['Parameters']){
       if(this.props.testJSON['Parameters'][parameter]['Name'] === parameterName){
         this.props.testJSON['Parameters'][parameter]['Value'] = e.target.value;
       }
     }
+
+
+    this.validateInput();
+
+
   }
 
+  getInstructions(){
+
+    var test = this.props.testInfo.find(test => {
+        if(!isDefined(this.props.currentTest)){
+          return(null);
+        }
+        return test['Type'] == this.props.currentTest;
+    });
+
+    if (test !== null && isDefined(test)){
+      return <p>{test['Instructions']}</p>
+    }
+  };
 
   /* Function that manages the output of the correct tags for the data type
   of a particular parameter. Ultimiately will include error checking.
@@ -174,7 +208,7 @@ class AddTestModal extends React.Component {
         break;
 
       default:
-        return(<input key={uuidv4()} className="form-control" parameter-name={parameter['Name']} placeholder="-" onChange={this.handleValueInput}/>)
+        return(<input key={`${parameter['Name']}_key`} className="form-control" parameter-name={parameter['Name']} placeholder="-" onChange={this.handleValueInput}/>)
         break;
    }
 
@@ -182,7 +216,7 @@ class AddTestModal extends React.Component {
   }
 
   render(){
-    let testOptions, testConfigurations;
+    let testOptions, testConfigurations, getInstructions;
     let dataStreamOptions;
     let inputTagGroup;
 
@@ -202,7 +236,6 @@ class AddTestModal extends React.Component {
      //Loading Test Configurations
      // Need to push this into a function
      testConfigurations = this.props.testInfo.map((test) => {
-          console.log(this.props.currentTest);
           if(!isDefined(this.props.currentTest)){
             return(null);
           }
@@ -224,6 +257,8 @@ class AddTestModal extends React.Component {
           }
       });
 
+
+
     return(
       <>
         <Modal dialogClassName="wide-modal" show={this.props.active} onHide={this.props.handleModalClose}>
@@ -240,6 +275,7 @@ class AddTestModal extends React.Component {
                 <div className="col-sm-4">
                   <form>
                     <div className="form-group">
+                       {this.getInstructions()}
                        <select className="form-control" style={{minWidth :'100%'}} value={this.props['currentTest']} onChange={this.handleTestSelection}>
                         {testOptions}
                        </select>
@@ -258,7 +294,7 @@ class AddTestModal extends React.Component {
               <Button variant="secondary" onClick={this.props.handleModalClose}>
                 Close Without Saving
               </Button>
-              <Button variant="primary" onClick={this.handleSave}>
+              <Button variant="primary" onClick={this.handleSave} disabled={this.state.invalidInput}>
                 Save Changes
               </Button>
             </Modal.Footer>

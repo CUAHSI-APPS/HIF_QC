@@ -152,7 +152,6 @@ class ConfigTestViews extends React.Component {
             </select>
             <div className="button-group text-center pt-3">
                 <button disabled={!this.props.dataLoaded} id="btnAddTest" className="btn btn-secondary mx-1" onClick={this.handleAddTest}>Add Test</button>
-                <button disabled={this.disableModRmv()} id="btnModTest" className="btn btn-secondary mx-1" onClick={this.handleModTest}>Modify Test</button>
                 <button disabled={this.disableModRmv()} id="btnRmvTest" className="btn btn-secondary mx-1" onClick={this.handleRmvTest}>Remove Test</button>
             </div>
         </div>
