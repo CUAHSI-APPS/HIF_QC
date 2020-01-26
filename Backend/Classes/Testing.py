@@ -93,6 +93,7 @@ class MissingValTest(Test):
 
             dataframe = dataframe.reindex(pd.date_range(start=dataframe.index[0], end=dataframe.index[-1], freq=self.timeStep))
             outdf = dataframe.notna()[self.column]
+
             return outdf.apply(lambda x: self.flag.flag(x, self.testName)), dataframe.index
 
 class RangeTest(Test):
