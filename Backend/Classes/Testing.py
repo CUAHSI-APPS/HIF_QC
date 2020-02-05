@@ -3,7 +3,7 @@ from Backend.Classes.Flagging import Flag
 import numpy as np
 import pandas as pd
 from datetime import timedelta
-
+from Backend.Classes.MachineLearning.ExtremeEventDetection import extreme_event_detection, anomaly_binary_list
 '''
       {'Type':'Basic Outlier Test',
         'Parameters':[
@@ -170,3 +170,25 @@ class RepeatValueTest(Test):
 
         # not x for now. Need to align the true false across datatypes
         return dfcopy[self.column].apply(lambda x: self.flag.flag(x, self.testName))
+
+
+class ExtremePeakDetection(Test):
+  def __init__(self,testId = 1, **kwargs):
+        self.flag = Flag()
+        self.testName = kwargs["Type"]
+        self.id = testId
+        self.column = kwargs["Column"]
+        self.windowLength = -1
+        for parameter in kwargs["Parameters"]:
+          if parameter['Name'] == 'Window Length':
+            self.windowLength = int(parameter['Value'])
+  def runTest(self, dataframe):
+    anomalies_output = extreme_event_detection(dataframe[self.column], self.windowLength)
+    dfcopy = dataframe.copy()
+    dfcopy.name = self.column
+    #print(len(anomalies_output[1]))
+    #print(len(dfcopy[self.column]))
+    dfcopy[self.column] = np.array(anomalies_output[2])
+    #print(self.testName)
+    #print(dfcopy[self.column].apply(lambda x: self.flag.flag(x, self.testName)))
+    return dfcopy[self.column].apply(lambda x: self.flag.flag(x, self.testName))

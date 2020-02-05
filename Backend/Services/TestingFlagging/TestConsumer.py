@@ -75,8 +75,12 @@ class TestConusmer():
                                 # run missingvaltest by default
                                 testrunner = MissingValTest(4, **test)
                                 flags, self.liveIndex = testrunner.runTest(df)
+                            elif test['Type'] == 'Extreme Peak Detection':
+                                testrunner = ExtremePeakDetection(5, **test)
+                                flags = testrunner.runTest(df)
+                                print ('run extreme peak detection', flush=True)
 
-
+                            print (flags)
                             print(len(col), len(flags), flush=True)
                             outdf = outdf.reindex(self.liveIndex)
                             flags = flags.reindex(self.liveIndex)
@@ -89,6 +93,7 @@ class TestConusmer():
 
 
                         except Exception as e:
+                            print(e)
                             print("there was an error in one of the tests", flush=True)
                             traceback.print_exc(file=sys.stdout)
                             continue
@@ -96,12 +101,12 @@ class TestConusmer():
 
 
 
-
+                print (outdf)
                 # set datetime as the index of our flags
                 outdf[timeIndex] = self.liveIndex
 
                 outdf = outdf.set_index(timeIndex)
-
+                print (outdf)
 
                 filename = '/SessionFiles/' + sessionId + '_outputcsv.csv'
                 outdf.to_csv(filename)

@@ -94,6 +94,13 @@ class ConfigParentView extends React.Component {
           {'Name':'Comparision Data', 'Data Type': 'TimeSeries'},
           {'Name':'Difference Threshold (%)', 'Data Type': 'Integer'}
         ]
+      },
+      {
+        'Type': 'Extreme Peak Detection',
+        'Instructions': 'Please select the window size for this algorithm.',
+        'Parameters': [
+          {'Name': 'Window Length', 'Data Type': 'Integer'}
+        ]
       }
       // {'Type': 'Machine Learning', 'Parameters':[
       //   {'Name': 'Training Set', 'Data Type': 'TimeSeries'}, //column name
