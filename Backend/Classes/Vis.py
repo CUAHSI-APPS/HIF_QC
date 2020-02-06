@@ -21,15 +21,21 @@ class VisBuilder():
         # build color palette
         flagCodes = self.FlagMgr.returnAllFlagsAsArr()
         colorMap = Category20[len(flagCodes)]
+
         source = ColumnDataSource({'x':x,'y':y,'label':flags})
-        color_mapper = CategoricalColorMapper(factors=list(self.FlagMgr.fetchFlagConfig().values()), palette=[colorMap[i] for i in range(len(flagCodes))])
+        defaultLineColor = "#000000"
+
+        # setting first color for OK to black since that the is default line color
+        palette = [defaultLineColor]
+        palette += [colorMap[i] for i in range(1,len(flagCodes))]
+        color_mapper = CategoricalColorMapper(factors=list(self.FlagMgr.fetchFlagConfig().values()), palette=palette)
         # remove missing values
         if flags is not None:
             y = self.rmvMissingValues(y, flags)
 
         p = figure(title="Line", x_axis_type='datetime', plot_width=700, plot_height=400)
+        p.line(x=x,y=y,line_color=defaultLineColor)
         r = p.circle(x='x', y='y', source=source, color={'field': 'label', 'transform': color_mapper},legend='label') #line_color="#000000", )
-        p.line(x=x,y=y,line_color="#000000")
         r.visible  = False
         #p.legend.location = "top_left"
         #p.legend.click_policy="hide"
