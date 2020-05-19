@@ -97,7 +97,7 @@ class ConfigParentView extends React.Component {
       },
       {
         'Type': 'Extreme Peak Detection',
-        'Instructions': 'Please select the window size for this algorithm.',
+        'Instructions': 'Please select the window size for this algorithm in number of values. For example if you input 10, this algorithim will operate on 10 values at a time.',
         'Parameters': [
           {'Name': 'Window Length', 'Data Type': 'Integer'}
         ]
