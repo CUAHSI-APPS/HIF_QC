@@ -38,7 +38,31 @@ class ConfigParentView extends React.Component {
     this.colNames = JSON.parse(sessionStorage.getItem('dataCols'));
     this.metaData = {};
     this.testTypes = [];
-    this.allTests = {};
+
+    //load up stored test data based on which columns
+    // we have in scope right now 
+    if(sessionStorage.getItem('allTests')){
+      var temp = JSON.parse(sessionStorage.getItem('allTests'));
+      this.allTests = {};
+      for(var test in temp){
+        if(this.colNames.includes(test)){
+          this.allTests[test] = temp[test];
+        }
+      }
+    }
+    else{
+      this.allTests = {};
+    }
+
+    //check if there exists a test defined on a column of data
+    for(var col in this.colNames){
+        if(this.colNames[col] in this.allTests && this.allTests[this.colNames[col]].length > 0){
+          this.state.continueDisabled = false;
+          break;
+        }
+    }
+
+
 
     //bindings
     this.fetchMetadata = this.fetchMetadata.bind(this);
@@ -304,11 +328,13 @@ class ConfigParentView extends React.Component {
         }
       }
 
-
      sessionStorage.setItem('testedCols', JSON.stringify(testedCols));
+     sessionStorage.setItem('allTests', JSON.stringify(this.allTests));
 
      //add time index to our service
      this.allTests['timeIndex'] = sessionStorage.getItem('indexCol');
+
+     console.log(this.allTests);
 
      fetch(endpoint, {
         method: 'POST',
@@ -317,7 +343,7 @@ class ConfigParentView extends React.Component {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(this.allTests)
-      })
+      });
 
 
    }

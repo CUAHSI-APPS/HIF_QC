@@ -3,36 +3,47 @@
 
 <!-- Load From Server -->
 {{ chartScript|safe }}
+
 <div class="row">
   <h2>{{colName}}</h2>
 </div>
+
 <div class="row">
-<div class="col-md-1"><button id="left">Previous Time Series</button></div>
-<div class="col-md-10">
-  <div class="row">
-    <div class="visualization col-md-8">
-      {{ chartDiv|safe }}
-    </div>
-    <div class="col-md-4">
-      <!-- <div class="metadata-box">
-        MetaData:
-      </div> -->
-      <div class="flags-box">
-        <div>Flags</div>
-        <ul>
-        {% for flag in flags %}
-            {% if okFlag not in flag.code %}
-              <li>{{flag.datetime}}, {{flag.code}}</li>
-            {% endif %}
-        {% endfor %}
-        </ul>
+  <div class="col-md-1"><button id="left">Previous Time Series</button></div>
+  <div class="col-md-10">
+    <div class="row">
+      <div class="visualization col-md-8">
+        {{ chartDiv|safe }}
+      </div>
+      <div class="col-md-4">
+        <!-- <div class="metadata-box">
+          MetaData:
+        </div> -->
+        <div class="flags-box">
+          <div>Flags</div>
+          <ul>
+          {% for flag in flags %}
+              {% if okFlag not in flag.code %}
+                <li>{{flag.datetime}}, {{flag.code}}</li>
+              {% endif %}
+          {% endfor %}
+          </ul>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div class="col-md-1"><button id="right" >Next Time Series</button></div>
+  <div class="col-md-1"><button id="right" >Next Time Series</button></div>
 </div>
 
-<button class="btn btn-secondary" id="previousTask" onclick="NextProgressBar(6);">Next</button>
+<div class="row">
+    <div class="col-md-11">
+
+    </div>
+    <div class="col-md-1">
+      <button class="right btn btn-secondary" id="previousTask" onclick="NextProgressBar(6);">Next</button>
+    </div>
+</div>
+
+
 
 <script type="text/javascript" src="../static/js/flagReview.js"></script>

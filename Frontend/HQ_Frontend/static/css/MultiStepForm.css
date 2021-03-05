@@ -3,6 +3,17 @@
     margin: auto;
 }
 
+.informational-text{
+  max-width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.right{
+  margin-left: auto;
+}
+
 .progressbar {
 counter-reset: step;
 z-index: 1;

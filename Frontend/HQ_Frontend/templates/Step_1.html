@@ -3,13 +3,15 @@
 {% block content %}
 <div class="card-body">
     <div class="text-center"><h4>Welcome to the CUAHSI HYDROQUALITY client</h4></div>
-    <p>This tool will guide you through the steps required to quickly and easily create, configure and run common quality control tests on your data.
-      Please begin double clicking the file drop area below to upload a .csv file containing your data. Please note that the system, at present only supports CSV files with a single header column.</p>
+    <p class="informational-text"> If this is your first time using this tool, consider watching our <a href='https://youtu.be/-WYtCaTUdn4' target='_blank'>video tutorial.</a></p>
+    <p class="informational-text">This tool will guide you through the steps required to quickly and easily create, configure and run common quality control tests on your data.
+      Please begin double clicking on the file  area below to upload a .csv file containing your data.
+      Please note that the system, at present only supports CSV files with a single header column.</p>
 
 
     <form id="my_dropzone" action="http://127.0.0.1:5000/upload/" method='post' class="dropzone">
         <div class="dz-default dz-message">
-            <span>Drop a csv file here to upload</span>
+            <span>Click here to upload a file.</span>
         </div>
     </form>
 

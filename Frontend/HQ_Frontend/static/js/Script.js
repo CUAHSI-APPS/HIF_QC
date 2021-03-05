@@ -153,4 +153,7 @@ function RunTest() {
         $('#headerTest').text("Test Running...");
         queryStatus();
       })
+    .catch((error)=>{
+      console.log(error)
+    })
 }
