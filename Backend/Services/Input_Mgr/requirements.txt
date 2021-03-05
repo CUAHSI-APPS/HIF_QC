@@ -1,6 +1,6 @@
 Flask==1.0.2
 flask-cors
-Jinja2==2.10
+Jinja2==2.10.1
 pandas
 redis
 kafka-python
